@@ -62,7 +62,7 @@ exports.loginUsuario = (req,res,next) => {
                 const payload = {
                     sub: _usuario.id,
                     iat: moment().unix,
-                    exp: moment().add(14,'minute').unix()
+                    exp: moment().add(60,'minute').unix()
                 }
                 const accessToken = jwt.encode(payload,codSecretoToken.SECRET_KEY);
 

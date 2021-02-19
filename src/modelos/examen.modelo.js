@@ -12,7 +12,7 @@ const schemaExamen = new Schema({
         required: true,
         trim: true  
     },
-    Sigla: {
+    sigla: {
         type: String,
         required: true,
         trim: true

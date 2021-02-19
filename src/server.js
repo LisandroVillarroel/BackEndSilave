@@ -9,6 +9,8 @@ const formato1Ruta = require('./rutas/formato1.ruta.js');
 const fichaRuta = require('./rutas/ficha.ruta.js');
 const empresaRuta = require('./rutas/empresa.ruta.js');
 const accesoRuta = require('./rutas/acceso.ruta.js');
+const usuarioRuta = require('./rutas/usuario.ruta.js');
+
 const express = require('express');
 const propiedadesDb = require('./config/propiedades');
 const DB = require('./config/db');
@@ -69,6 +71,11 @@ empresaRuta(router);
 //// Acceso
 app.use('./api',router);
 accesoRuta(router);
+
+//// Usuario
+app.use('./api',router);
+usuarioRuta(router);
+
 
 router.get('/', (req,res) => {
     res.send('Ruta Inicial');

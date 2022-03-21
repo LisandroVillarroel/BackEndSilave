@@ -1,26 +1,29 @@
-const empresa = require('../modelos/empresa.modelo');
+const menu = require('../modelos/menu.modelo');
 
-async function crearEmpresa(req,res) {
-    if(req.body.empresas){             // Si trae información de la búsqueda anterior
+async function crearMenu(req,res) {
+    console.log('pasoooo');
+    if(req.body.menus){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Empresa Ya Existe'
+            mensaje: 'Ya existe'
            };
-            console.log(respuesta);
-            return res.status(200).json(respuesta);
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
     }
     try {
-        console.log('agrega', req.body)
-        const empresa_resp = await new empresa(req.body).save()
-    
+        
+        console.log('dato menu',req.body);
+        const menu_resp = await new menu(req.body).save();
+        
         respuesta = {
             error: false, 
-            data: empresa_resp,
+            data: menu_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
+       
         console.log(respuesta);
         res.status(200).json(respuesta)
     } catch(error) {
@@ -31,11 +34,12 @@ async function crearEmpresa(req,res) {
             mensaje: error
         };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }   
 }
 
-async function actualizarEmpresa(req,res) {
+
+async function actualizarMenu(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -45,36 +49,34 @@ async function actualizarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.menus){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro la Menu'
            };
             return res.status(200).json(respuesta);
     }
 
     // si encontro información reemplaza información
     try {
-        let empresa_actualiza = req.body.empresas[0];
+        let menu_actualiza = req.body.menus[0];
         
-        empresa_actualiza = Object.assign(empresa_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
-        // const empresa_resp = empresa.save(empresa_actualiza);
+        menu_actualiza = Object.assign(menu_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         
-        // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-         await empresa.updateOne({_id: req.params.id},empresa_actualiza) 
+        const menu_resp =await menu.updateOne({_id: req.params.id},menu_actualiza) 
 
         respuesta = {
             error: false, 
-            data: '',
+            data: menu_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log(respuesta);
+       
         res.status(200).json(respuesta)
     } catch(error) {
         respuesta = {
@@ -89,29 +91,26 @@ async function actualizarEmpresa(req,res) {
 
 }
 
-function buscarEmpresa(req,res) {
+function buscarMenu(req,res) {
    
     if(req.body.error){ // Si biene un error de la busueda anterior
-        
         respuesta = {
             error: true, 
             data: '',
             codigo: 500, 
             mensaje: req.body.error
         };
-        console.log('paso 1',respuesta);
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }
 
-    if(req.body.empresas){  // si la función de busqueda encontro información
+    if(req.body.menus){  // si la función de busqueda encontro información
         respuesta = {
             error: false, 
-            data: req.body.empresas,
+            data: req.body.menus,
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log('paso 2',respuesta);
         return res.status(200).json(respuesta);
     }
    //si no encontro registros
@@ -119,13 +118,12 @@ function buscarEmpresa(req,res) {
         error: false, 
         data: '',
         codigo: 404, 
-        mensaje: 'No encontró la Empresa'
+        mensaje: 'No encontró la Menu'
     };
-    console.log('paso 3',respuesta);
     return res.status(200).json(respuesta);
 }
 
-async function eliminarEmpresa(req,res) {
+async function eliminarMenu(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -135,23 +133,24 @@ async function eliminarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.menus){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro el Menu'
            };
             return res.status(200).json(respuesta);
     }
 
     // si encontro información reemplaza información
     try {
-        queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-        await empresa.updateOne({_id: req.params.id},queryModifica) 
+        
+        queryModifica={usuarioModifica_id: req.params.idUsu, estado:'Borrado'};
+        await menu.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
             error: false, 
@@ -169,18 +168,21 @@ async function eliminarEmpresa(req,res) {
           mensaje: error
          };
           console.log(respuesta);
-          return res.status(500).json(respuesta);
+          return res.status(200).json(respuesta);
       }   
 
 }
 
-async function buscarTodosEmpresa(req,res) {
+async function buscarTodosMenu(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query).sort('razonSocial');
+        
+            query={'empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        
+        console.log('query menu:',query);
+        const menus = await menu.find(query) //.sort('nombrePaciente');
         respuesta = {
             error: false, 
-            data: empresas,
+            data: menus,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -193,43 +195,19 @@ async function buscarTodosEmpresa(req,res) {
           mensaje: error
          };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
       }   
 }
 //next pasa a la siguiente función
-async function buscaRut(req,res,next){
-    const newEmpresa = {
-        rutEmpresa: req.body.rutEmpresa,
-        razonSocial: req.body.razonSocial,
-        nombreFantasia: req.body.nombreFantasia,
-        direccion: req.body.direccion,
-        usuarioCrea_id: req.body.usuarioCrea_id,
-        usuarioModifica_id: req.body.usuarioModifica_id
-    }
-    try {
-        let query={};
-        query={rutEmpresa:newEmpresa.rutEmpresa, estado: {$ne:'Borrado'}};
-        console.log(query);
-        const empresas = await empresa.find(query)
-    
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
-        return next();
-    } catch(error) {
-        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
-        next();
-    }
-}
-
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query)
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
+        const menus = await menu.find(query)
+        if(!menus.length) return next(); // si no tiene datos pasa a la siguiente funcion
+        req.body.menus=menus;  // si tiene datos los guarda y pasa a la siguiente funcion
         return next();
     } catch(error) {
         req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
@@ -238,5 +216,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearEmpresa,actualizarEmpresa,buscarEmpresa,eliminarEmpresa,buscarTodosEmpresa,buscaRut,buscaId
+    crearMenu,actualizarMenu,buscarMenu,eliminarMenu,buscarTodosMenu,buscaId
 }

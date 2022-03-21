@@ -172,7 +172,7 @@ async function eliminarCliente(req,res) {
 
 async function buscarTodosCliente(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
+        query={empresa_Id:req.params.empresaId, estado: {$ne:'Borrado'}};
         const clientes = await cliente.find(query).sort('razonSocial');
         respuesta = {
             error: false, 

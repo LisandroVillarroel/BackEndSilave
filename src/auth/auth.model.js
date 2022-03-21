@@ -33,10 +33,17 @@ const schemaUsuario = new Schema({
         required: true,
         trim: true
     },
-    empresa_Id: {
-        type: String,
-        required: true,
-        trim: true
+    empresa: {
+        empresa_Id: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        rutEmpresa: {
+            type: String,
+            required: true,
+            trim: true
+        },
     },
     estado: { 
         type: String, 

@@ -8,6 +8,7 @@ const codSecretoToken = require('./../config/propiedades');
 
 
 exports.createUsuario = (req, res, next) => {
+    console.log('paso crea usu:',req.body);
     const newUsuario = {
         usuario: req.body.usuario,
         contrasena: bcrypt.hashSync(req.body.contrasena),
@@ -15,11 +16,14 @@ exports.createUsuario = (req, res, next) => {
         nombres: req.body.nombres,
         apellidoPaterno: req.body.apellidoPaterno,
         apellidoMaterno: req.body.apellidoMaterno,
-        empresa_Id: req.body.empresa_Id
+        empresa: {
+            empresa_Id: req.body.empresa.empresa_Id,
+            rutEmpresa: req.body.empresa.rutEmpresa
+        }
     }
     Usuario.create (newUsuario,(err, _usuario) => {
         if (err && err.code === 11000) return res.status(409).send('Usuario ya existe');
-        if(err) return res.status(500).send('Error de Servidor');
+        if(err) return res.status(500).send('Error de Servidor'+err);
 ////        const payload = {
 ////            sub: _usuario.id,
 ////            iat: moment().unix,
@@ -41,28 +45,22 @@ exports.loginUsuario = (req,res,next) => {
         usuario: req.body.usuario,
         contrasena: req.body.contrasena
     }
-    console.log('paso');
     console.log('datos: ',DatoUsuario)
     Usuario.login({usuario: DatoUsuario.usuario},(err,_usuario) => {
-        console.log('paso2');
         if(err) return res.status(500).send('Error Servidor');
-        console.log('paso3');
         if (!_usuario){
             // Usuario No existe
-            console.log('paso4');
+
             res.status(409).send({message:'Contraseña o Usuario no coinciden'})
             //res.send({_usuario});
         }else{
-            console.log('paso5');
-            console.log('pasousuario:',DatoUsuario);
-            console.log('paso contraseña:',_usuario);
             const resultContrasena = bcrypt.compareSync(DatoUsuario.contrasena,_usuario.contrasena);
             if (resultContrasena){  // si la contraseña corresponde True
-                console.log('paso6');
                 const payload = {
                     sub: _usuario.id,
                     iat: moment().unix,
-                    exp: moment().add(60,'minute').unix()
+                    //exp: moment().add(24 * 60 * 60,'minute').unix()
+                    exp: moment().add(14,'minute').unix()  // tiempo que expira token
                 }
                 const accessToken = jwt.encode(payload,codSecretoToken.SECRET_KEY);
 
@@ -78,7 +76,10 @@ exports.loginUsuario = (req,res,next) => {
                         nombres:  _usuario.nombres,
                         apellidoPaterno: _usuario.apellidoPaterno,
                         apellidoMaterno: _usuario.apellidoMaterno,
-                        empresa_Id: _usuario.empresa_Id,
+                        empresa: {
+                            empresa_Id: _usuario.empresa.empresa_Id,
+                            rutEmpresa: _usuario.empresa.rutEmpresa,
+                        },
                         accessToken: accessToken
                         
                      ////   expiresIn: expiresIn
@@ -86,7 +87,6 @@ exports.loginUsuario = (req,res,next) => {
                 res.send({usuarioDato});
             }
             else {
-                console.log('paso7');
                 // Contraseña no existe
                 res.status(409).send({message:'Contraseña o Usuario no coinciden'});
             }

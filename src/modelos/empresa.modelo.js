@@ -23,6 +23,51 @@ const schemaEmpresa = new Schema({
         required: true,
         trim: true
     },
+    nombreContacto: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    telefono: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    envioEmail: {
+        emailEnvio: {
+            type: String,
+            trim: true
+        },
+        password: {
+            type: String,
+            trim: true
+        },
+        nombreDesde: {
+            type: String,
+            trim: true
+        },
+        asunto: {
+            type: String,
+            trim: true
+        },
+        tituloCuerpo: {
+            type: String,
+            trim: true
+        },
+        tituloCuerpoMedio: {
+            type: String,
+            trim: true
+        },
+        tituloCuerpoPie: {
+            type: String,
+            trim: true
+        },
+    },
     usuarioCrea_id: {
         type: String,
         required: false,

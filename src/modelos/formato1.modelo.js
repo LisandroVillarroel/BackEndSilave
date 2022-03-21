@@ -2,131 +2,126 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.set('useCreateIndex', true);
 const schemaFormato1 = new Schema({
-    nombre: {
+    nombreFormato: {
         type: String,
        required: true,
         trim: true
     },
-    cuadros: [{
-        titulo: {
+    formato:[{
+        nombreTitulo: {
             type: String,
-            required: true,
+        required: true,
             trim: true
         },
-        titulos1: {
-            campo1: {
+        cuadros: [{
+            titulo: {
                 type: String,
                 required: true,
                 trim: true
             },
-            campo2: {
-                type: String,
-                required: true,
-                trim: true
+            titulos1: {
+                campo1: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo2: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo3: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo4: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
             },
-            campo3: {
-                type: String,
-                required: true,
-                trim: true
+            titulos2: {
+                campo1: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo2: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo3: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo4: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo5: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
             },
-            campo4: {
-                type: String,
-                required: true,
-                trim: true
-            },
-        },
-        titulos2: {
-            campo1: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo2: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo3: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo4: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo5: {
-                type: String,
-                required: true,
-                trim: true
-            },
-        },
-        datos: [{
-            campo1: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            ingresoSN1: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo2: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            ingresoSN2: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo3: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            ingresoSN3: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo4: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            ingresoSN4: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            campo5: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            ingresoSN5: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            valor: {
-                type: Number,
-                required: true,
-                trim: true
-            },
+            datos: [{
+                campo1: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                ingresoSN1: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo2: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                ingresoSN2: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo3: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                ingresoSN3: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo4: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                ingresoSN4: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                campo5: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                ingresoSN5: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+            }],
         }],
-        observacion: {
-            type: String,
-            required: true,
-            trim: true
-        },
-          
     }],
-    
     usuarioCrea_id: {
         type: String,
         required: false,

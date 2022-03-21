@@ -7,7 +7,7 @@ console.log('pro: ',req.body)
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Rut Ya existe'
+            mensaje: 'Formato Ya existe'
            };
         console.log(respuesta);
         return res.status(200).json(respuesta);

@@ -10,7 +10,6 @@ const schemaPropietario = new Schema({
     nombres: {
         type: String,
         required: true,
-        required: true,
         trim: true  
     },
     apellidoPaterno: {

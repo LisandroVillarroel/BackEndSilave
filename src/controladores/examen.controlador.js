@@ -7,7 +7,7 @@ console.log('pro: ',req.body)
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Rut Ya existe'
+            mensaje: 'Código Ya existe'
            };
         console.log(respuesta);
         return res.status(200).json(respuesta);
@@ -38,8 +38,10 @@ console.log('pro: ',req.body)
 
 async function actualizarExamen(req,res) {
 
+    console.log('trae:',req.body)
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
+            
             error: true, 
             data: '',
             codigo: 500, 
@@ -49,7 +51,7 @@ async function actualizarExamen(req,res) {
             return res.status(200).json(respuesta);
     }
 
-    if(!req.body.examen){             // Si no trae información de la búsqueda anterior
+    if(!req.body.examenes){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
@@ -80,11 +82,11 @@ async function actualizarExamen(req,res) {
         respuesta = {
           error: true, 
           data: '',
-          codigo: error.codigo, 
+          codigo: 500, 
           mensaje: error
          };
           console.log(respuesta);
-          return res.status(error.codigo).json(respuesta);
+          return res.status(200).json(respuesta);
       }   
 
 }
@@ -171,7 +173,7 @@ async function eliminarExamen(req,res) {
 
 async function buscarTodosExamen(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
+        query={empresa_Id:req.params.empresaId,estado: {$ne:'Borrado'}};
         const examenes = await examen.find(query).sort('descripcion');
         respuesta = {
             error: false, 
@@ -196,6 +198,7 @@ async function buscarTodosExamen(req,res) {
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
+        console.log('examen req:',req.params);
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
         const examenes = await examen.find(query)

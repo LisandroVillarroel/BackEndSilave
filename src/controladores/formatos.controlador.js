@@ -1,23 +1,24 @@
-const empresa = require('../modelos/empresa.modelo');
+const formatos = require('../modelos/formatos.modelo');
 
-async function crearEmpresa(req,res) {
-    if(req.body.empresas){             // Si trae información de la búsqueda anterior
+async function crearFormatos(req,res) {
+console.log('pro: ',req.body)    
+    if(req.body.formatos){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Empresa Ya Existe'
+            mensaje: 'Formato Ya existe'
            };
-            console.log(respuesta);
-            return res.status(200).json(respuesta);
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
     }
     try {
         console.log('agrega', req.body)
-        const empresa_resp = await new empresa(req.body).save()
+        const formatos_resp = await new formatos(req.body).save()
     
         respuesta = {
             error: false, 
-            data: empresa_resp,
+            data: formatos_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -31,11 +32,11 @@ async function crearEmpresa(req,res) {
             mensaje: error
         };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }   
 }
 
-async function actualizarEmpresa(req,res) {
+async function actualizarFormatos(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -45,28 +46,27 @@ async function actualizarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.formatos){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro el Formato'
            };
             return res.status(200).json(respuesta);
     }
 
     // si encontro información reemplaza información
     try {
-        let empresa_actualiza = req.body.empresas[0];
+        let formatos_actualiza = req.body.formatos[0];
         
-        empresa_actualiza = Object.assign(empresa_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
-        // const empresa_resp = empresa.save(empresa_actualiza);
+        formatos_actualiza = Object.assign(formatos_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         
         // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-         await empresa.updateOne({_id: req.params.id},empresa_actualiza) 
+         await formatos.updateOne({_id: req.params.id},formatos_actualiza) 
 
         respuesta = {
             error: false, 
@@ -89,29 +89,26 @@ async function actualizarEmpresa(req,res) {
 
 }
 
-function buscarEmpresa(req,res) {
+function buscarFormatos(req,res) {
    
     if(req.body.error){ // Si biene un error de la busueda anterior
-        
         respuesta = {
             error: true, 
             data: '',
             codigo: 500, 
             mensaje: req.body.error
         };
-        console.log('paso 1',respuesta);
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }
 
-    if(req.body.empresas){  // si la función de busqueda encontro información
+    if(req.body.formatos){  // si la función de busqueda encontro información
         respuesta = {
             error: false, 
-            data: req.body.empresas,
+            data: req.body.formatos,
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log('paso 2',respuesta);
         return res.status(200).json(respuesta);
     }
    //si no encontro registros
@@ -119,13 +116,12 @@ function buscarEmpresa(req,res) {
         error: false, 
         data: '',
         codigo: 404, 
-        mensaje: 'No encontró la Empresa'
+        mensaje: 'No encontró el Formato'
     };
-    console.log('paso 3',respuesta);
     return res.status(200).json(respuesta);
 }
 
-async function eliminarEmpresa(req,res) {
+async function eliminarFormatos(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -135,15 +131,15 @@ async function eliminarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.formatos){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro el Formato'
            };
             return res.status(200).json(respuesta);
     }
@@ -151,7 +147,7 @@ async function eliminarEmpresa(req,res) {
     // si encontro información reemplaza información
     try {
         queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-        await empresa.updateOne({_id: req.params.id},queryModifica) 
+        await formatos.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
             error: false, 
@@ -169,18 +165,18 @@ async function eliminarEmpresa(req,res) {
           mensaje: error
          };
           console.log(respuesta);
-          return res.status(500).json(respuesta);
+          return res.status(200).json(respuesta);
       }   
 
 }
 
-async function buscarTodosEmpresa(req,res) {
+async function buscarTodosFormatos(req,res) {
     try {
         query={estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query).sort('razonSocial');
+        const formatos_ = await formatos.find(query).sort('nombreFormato');
         respuesta = {
             error: false, 
-            data: empresas,
+            data: formatos_,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -193,43 +189,19 @@ async function buscarTodosEmpresa(req,res) {
           mensaje: error
          };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
       }   
 }
 //next pasa a la siguiente función
-async function buscaRut(req,res,next){
-    const newEmpresa = {
-        rutEmpresa: req.body.rutEmpresa,
-        razonSocial: req.body.razonSocial,
-        nombreFantasia: req.body.nombreFantasia,
-        direccion: req.body.direccion,
-        usuarioCrea_id: req.body.usuarioCrea_id,
-        usuarioModifica_id: req.body.usuarioModifica_id
-    }
-    try {
-        let query={};
-        query={rutEmpresa:newEmpresa.rutEmpresa, estado: {$ne:'Borrado'}};
-        console.log(query);
-        const empresas = await empresa.find(query)
-    
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
-        return next();
-    } catch(error) {
-        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
-        next();
-    }
-}
-
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query)
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
+        const formatos = await formatos.find(query)
+        if(!formatos.length) return next(); // si no tiene datos pasa a la siguiente funcion
+        req.body.formatos=formatos;  // si tiene datos los guarda y pasa a la siguiente funcion
         return next();
     } catch(error) {
         req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
@@ -238,5 +210,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearEmpresa,actualizarEmpresa,buscarEmpresa,eliminarEmpresa,buscarTodosEmpresa,buscaRut,buscaId
+    crearFormatos,actualizarFormatos,buscarFormatos,eliminarFormatos,buscarTodosFormatos,buscaId
 }

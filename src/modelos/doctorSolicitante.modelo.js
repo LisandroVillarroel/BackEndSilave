@@ -1,29 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.set('useCreateIndex', true);
-const schemaExamen = new Schema({
-    codigoExamen: {
-        type: String,
-       // required: true,
-        trim: true
-    },
-    codigoInterno: {
-        type: Number,
-        required: true,
-        trim: true
+const schemaDoctorSolicitante = new Schema({
+    cliente:{
+        idCliente: {
+            type: String,
+            required: true,
+            trim: true
+        }, 
+        nombreFantasia: {
+            type: String,
+            required: true,
+            trim: true
+        },
     },
     nombre: {
         type: String,
-        required: true,
-        trim: true  
-    },
-    sigla: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    precio: {
-        type: Number,
         required: true,
         trim: true
     },
@@ -51,5 +43,5 @@ const schemaExamen = new Schema({
     // Guardar Fecha creacion y actualizacion
 });
 
-const examenModel = mongoose.model('tabExamen', schemaExamen);
-module.exports =  examenModel;
+const doctorSolicitanteModel = mongoose.model('tabDoctorSolicitante', schemaDoctorSolicitante);
+module.exports =  doctorSolicitanteModel;

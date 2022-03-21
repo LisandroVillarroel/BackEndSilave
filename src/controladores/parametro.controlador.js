@@ -1,23 +1,23 @@
-const empresa = require('../modelos/empresa.modelo');
+const parametro = require('../modelos/parametro.modelo');
 
-async function crearEmpresa(req,res) {
-    if(req.body.empresas){             // Si trae información de la búsqueda anterior
+async function crearParametro(req,res) {
+    if(req.body.parametros){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Empresa Ya Existe'
+            mensaje: 'Parametro Ya existe'
            };
-            console.log(respuesta);
-            return res.status(200).json(respuesta);
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
     }
     try {
         console.log('agrega', req.body)
-        const empresa_resp = await new empresa(req.body).save()
+        const parametro_resp = await new parametro(req.body).save()
     
         respuesta = {
             error: false, 
-            data: empresa_resp,
+            data: parametro_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -31,11 +31,11 @@ async function crearEmpresa(req,res) {
             mensaje: error
         };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }   
 }
 
-async function actualizarEmpresa(req,res) {
+async function actualizarParametro(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -45,28 +45,28 @@ async function actualizarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.parametros){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro el Parámetro'
            };
             return res.status(200).json(respuesta);
     }
 
     // si encontro información reemplaza información
     try {
-        let empresa_actualiza = req.body.empresas[0];
+        let parametro_actualiza = req.body.parametros[0];
         
-        empresa_actualiza = Object.assign(empresa_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
-        // const empresa_resp = empresa.save(empresa_actualiza);
+        parametro_actualiza = Object.assign(parametro_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
+  
         
         // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-         await empresa.updateOne({_id: req.params.id},empresa_actualiza) 
+         await parametro.updateOne({_id: req.params.id},parametro_actualiza) 
 
         respuesta = {
             error: false, 
@@ -89,29 +89,26 @@ async function actualizarEmpresa(req,res) {
 
 }
 
-function buscarEmpresa(req,res) {
+function buscarParametro(req,res) {
    
     if(req.body.error){ // Si biene un error de la busueda anterior
-        
         respuesta = {
             error: true, 
             data: '',
             codigo: 500, 
             mensaje: req.body.error
         };
-        console.log('paso 1',respuesta);
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
     }
 
-    if(req.body.empresas){  // si la función de busqueda encontro información
+    if(req.body.parametros){  // si la función de busqueda encontro información
         respuesta = {
             error: false, 
-            data: req.body.empresas,
+            data: req.body.parametros,
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log('paso 2',respuesta);
         return res.status(200).json(respuesta);
     }
    //si no encontro registros
@@ -119,13 +116,12 @@ function buscarEmpresa(req,res) {
         error: false, 
         data: '',
         codigo: 404, 
-        mensaje: 'No encontró la Empresa'
+        mensaje: 'No encontró el Paámetro'
     };
-    console.log('paso 3',respuesta);
     return res.status(200).json(respuesta);
 }
 
-async function eliminarEmpresa(req,res) {
+async function eliminarParametro(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -135,15 +131,15 @@ async function eliminarEmpresa(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(500).json(respuesta);
+            return res.status(200).json(respuesta);
     }
 
-    if(!req.body.empresas){             // Si no trae información de la búsqueda anterior
+    if(!req.body.parametros){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro la Empresa'
+            mensaje: 'No Encontro el Parametro'
            };
             return res.status(200).json(respuesta);
     }
@@ -151,7 +147,7 @@ async function eliminarEmpresa(req,res) {
     // si encontro información reemplaza información
     try {
         queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-        await empresa.updateOne({_id: req.params.id},queryModifica) 
+        await parametro.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
             error: false, 
@@ -169,18 +165,18 @@ async function eliminarEmpresa(req,res) {
           mensaje: error
          };
           console.log(respuesta);
-          return res.status(500).json(respuesta);
+          return res.status(200).json(respuesta);
       }   
 
 }
 
-async function buscarTodosEmpresa(req,res) {
+async function buscarTodosParametro(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query).sort('razonSocial');
+        query={empresa_Id:req.params.empresaId, estado: {$ne:'Borrado'}};
+        const parametros = await parametro.find(query).sort('numeroFicha');
         respuesta = {
             error: false, 
-            data: empresas,
+            data: parametros,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -193,32 +189,8 @@ async function buscarTodosEmpresa(req,res) {
           mensaje: error
          };
         console.log(respuesta);
-        return res.status(500).json(respuesta);
+        return res.status(200).json(respuesta);
       }   
-}
-//next pasa a la siguiente función
-async function buscaRut(req,res,next){
-    const newEmpresa = {
-        rutEmpresa: req.body.rutEmpresa,
-        razonSocial: req.body.razonSocial,
-        nombreFantasia: req.body.nombreFantasia,
-        direccion: req.body.direccion,
-        usuarioCrea_id: req.body.usuarioCrea_id,
-        usuarioModifica_id: req.body.usuarioModifica_id
-    }
-    try {
-        let query={};
-        query={rutEmpresa:newEmpresa.rutEmpresa, estado: {$ne:'Borrado'}};
-        console.log(query);
-        const empresas = await empresa.find(query)
-    
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
-        return next();
-    } catch(error) {
-        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
-        next();
-    }
 }
 
 
@@ -227,9 +199,9 @@ async function buscaId(req,res,next){
     try {
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
-        const empresas = await empresa.find(query)
-        if(!empresas.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.empresas=empresas;  // si tiene datos los guarda y pasa a la siguiente funcion
+        const parametros = await parametro.find(query)
+        if(!parametros.length) return next(); // si no tiene datos pasa a la siguiente funcion
+        req.body.parametros=parametros;  // si tiene datos los guarda y pasa a la siguiente funcion
         return next();
     } catch(error) {
         req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
@@ -238,5 +210,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearEmpresa,actualizarEmpresa,buscarEmpresa,eliminarEmpresa,buscarTodosEmpresa,buscaRut,buscaId
+    crearParametro,actualizarParametro,buscarParametro,eliminarParametro,buscarTodosParametro,buscaId
 }

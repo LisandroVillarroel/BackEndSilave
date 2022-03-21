@@ -1,7 +1,10 @@
 const ficha = require('../modelos/ficha.modelo');
+const empresa = require('../modelos/empresa.modelo');
+const parametro = require('../modelos/parametro.modelo');
 
+const mailer = require('./../template/envioCorreo')
 async function crearFicha(req,res) {
-console.log('pro: ',req.body)    
+    console.log('pasoooo');
     if(req.body.fichas){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
@@ -13,12 +16,47 @@ console.log('pro: ',req.body)
         return res.status(200).json(respuesta);
     }
     try {
-        console.log('agrega', req.body)
-        const ficha_resp = await new ficha(req.body).save()
-    
+
+        const parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
+        const ficha_resp = await new ficha(req.body).save();
+        
+        await ficha.updateOne({_id: ficha_resp._id},{ 'fichaC.numeroFicha': parametroEmp.letra+parametroEmp.numeroFicha}) 
+        
         respuesta = {
             error: false, 
             data: ficha_resp,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+       
+        console.log(respuesta);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        return res.status(500).json(respuesta);
+    }   
+}
+
+async function subeArchivo(req,res) {
+    
+    try {
+  
+        let query={};
+        query={_id: req.params.empresa_id, estado: {$ne:'Borrado'}};
+        const empresa_ = await empresa.find(query)
+
+        
+        if (empresa_!=null){
+            mailer.enviar_mail(empresa_,req.params.nombreExamen,req.params.numFicha,req.params.empresa_id);
+        }
+        respuesta = {
+            error: false, 
+            data: '',
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -32,7 +70,33 @@ console.log('pro: ',req.body)
             mensaje: error
         };
         console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
+    }   
+}
+
+async function descargaArchivo(req,res) {
+    console.log('pasoooo sube arch');
+    
+    try {
+  
+
+        respuesta = {
+            error: false, 
+            data: '',
+            codigo: 200, 
+            mensaje: 'okkkk2'
+        };
+        console.log(respuesta);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
     }   
 }
 
@@ -46,7 +110,7 @@ async function actualizarFicha(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(200).json(respuesta);
+            return res.status(500).json(respuesta);
     }
 
     if(!req.body.fichas){             // Si no trae información de la búsqueda anterior
@@ -66,15 +130,17 @@ async function actualizarFicha(req,res) {
         ficha_actualiza = Object.assign(ficha_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         
         // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-         await ficha.updateOne({_id: req.params.id},ficha_actualiza) 
+        const ficha_resp =await ficha.updateOne({_id: req.params.id},ficha_actualiza) 
 
         respuesta = {
             error: false, 
-            data: '',
+            data: ficha_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log(respuesta);
+       
+        
+        console.log('respuesta envia',);
         res.status(200).json(respuesta)
     } catch(error) {
         respuesta = {
@@ -99,7 +165,7 @@ function buscarFicha(req,res) {
             mensaje: req.body.error
         };
         console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
     }
 
     if(req.body.fichas){  // si la función de busqueda encontro información
@@ -131,7 +197,7 @@ async function eliminarFicha(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(200).json(respuesta);
+            return res.status(500).json(respuesta);
     }
 
     if(!req.body.fichas){             // Si no trae información de la búsqueda anterior
@@ -146,7 +212,10 @@ async function eliminarFicha(req,res) {
 
     // si encontro información reemplaza información
     try {
-        queryModifica={usuarioModifica_id: '', estado:'Borrado'};
+        console.log('antes de eliminar:',req.params.id)
+        console.log('antes de eliminar2:',req.params.idUsu)
+        
+        queryModifica={usuarioModifica_id: req.params.idUsu, estado:'Borrado'};
         await ficha.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
@@ -172,7 +241,17 @@ async function eliminarFicha(req,res) {
 
 async function buscarTodosFicha(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
+        var privilegio_
+        if (req.params.privilegio='Administrador'){
+            privilegio=''
+        }
+   
+        if (req.params.estadoFicha!='Todo'){
+            query={'empresa.empresa_Id':req.params.empresaId,estadoFicha:req.params.estadoFicha,estado: {$ne:'Borrado'}};
+        }else{
+            query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        }
+        console.log('query ficha:',query);
         const fichas = await ficha.find(query).sort('nombrePaciente');
         respuesta = {
             error: false, 
@@ -189,7 +268,7 @@ async function buscarTodosFicha(req,res) {
           mensaje: error
          };
         console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
       }   
 }
 //next pasa a la siguiente función
@@ -210,5 +289,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearFicha,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscaId
+    crearFicha,subeArchivo,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscaId
 }

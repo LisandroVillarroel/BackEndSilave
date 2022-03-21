@@ -6,5 +6,5 @@ module.exports = (router) => {
     router.put('/cliente/:id',permiso, Clientes.buscaId, Clientes.actualizarCliente);
     router.get('/cliente/:id',permiso, Clientes.buscaId, Clientes.buscarCliente);
     router.delete('/cliente/:id/:idUsu',permiso, Clientes.buscaId, Clientes.eliminarCliente);
-    router.get('/clienteTodo', permiso, Clientes.buscarTodosCliente);
+    router.get('/clienteTodo/:empresaId', permiso, Clientes.buscarTodosCliente);
 }

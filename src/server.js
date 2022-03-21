@@ -5,11 +5,18 @@ const authRoutes = require('./auth/auth.routes.js');
 const clienteRuta = require('./rutas/cliente.ruta.js');
 const propietarioRuta = require('./rutas/propietario.ruta.js');
 const examenRuta = require('./rutas/examen.ruta.js');
+const formatosRuta = require('./rutas/formatos.ruta.js');
 const formato1Ruta = require('./rutas/formato1.ruta.js');
 const fichaRuta = require('./rutas/ficha.ruta.js');
 const empresaRuta = require('./rutas/empresa.ruta.js');
 const accesoRuta = require('./rutas/acceso.ruta.js');
 const usuarioRuta = require('./rutas/usuario.ruta.js');
+const especieRuta = require('./rutas/especie.ruta.js');
+const razaRuta = require('./rutas/raza.ruta.js');
+const examenFicha = require('./rutas/examenFicha.ruta.js');
+const doctorSolicitante = require('./rutas/doctorSolicitante.ruta.js');
+const parametroRuta = require('./rutas/parametro.ruta.js');
+const menuRuta = require('./rutas/menu.ruta.js');
 
 const express = require('express');
 const propiedadesDb = require('./config/propiedades');
@@ -27,6 +34,33 @@ const bodyParserURLEncoded = bodyParser.urlencoded({ extended: true });
 
 app.use(bodyParserJSON);
 app.use(bodyParserURLEncoded);
+
+/*app.use( bodyParser.json({limit: '50mb'}) );
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  extended: false,
+  parameterLimit:50000
+}));
+*/
+/*
+var jsonParser = bodyParser.json({limit:1024*1024*10, type:'application/json'}); 
+var urlencodedParser = bodyParser.urlencoded({ extended:true,limit:1024*1024*10,type:'application/x-www-form-urlencoded' });
+app.use(jsonParser);
+app.use(urlencodedParser);
+*/
+/*
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
+*/
+
+app.use(express.json({limit: '500mb'}));
+app.use(express.urlencoded({
+  limit: '500mb',
+  extended: true,
+  parameterLimit:5000000
+}));
+
+
 
  app.use(cors());
 
@@ -56,6 +90,10 @@ propietarioRuta(router);
 app.use('./api',router);
 examenRuta(router);
 
+//// formatos
+app.use('./api',router);
+formatosRuta(router);
+
 //// formato1
 app.use('./api',router);
 formato1Ruta(router);
@@ -75,6 +113,30 @@ accesoRuta(router);
 //// Usuario
 app.use('./api',router);
 usuarioRuta(router);
+
+//// Especie
+app.use('./api',router);
+especieRuta(router);
+
+//// Raza
+app.use('./api',router);
+razaRuta(router);
+
+//// Exámen Ficha
+app.use('./api',router);
+examenFicha(router);
+
+//// Doctor Solicitante
+app.use('./api',router);
+doctorSolicitante(router);
+
+//// parametro
+app.use('./api',router);
+parametroRuta(router);
+
+//// menu
+app.use('./api',router);
+menuRuta(router);
 
 
 router.get('/', (req,res) => {

@@ -201,13 +201,14 @@ async function buscaRut(req,res,next){
         direccion: req.body.direccion,
         telefono: req.body.telefono,
         email: req.body.email,
+        empresa_Id:req.body.empresa_Id,
         nombreContacto: req.body.nombreContacto,
         usuarioCrea_id: req.body.usuarioCrea_id,
         usuarioModifica_id: req.body.usuarioModifica_id
     }
     try {
         let query={};
-        query={rutCliente:newCliente.rutCliente, estado: {$ne:'Borrado'}};
+        query={rutCliente:newCliente.rutCliente, empresa_Id:newCliente.empresa_Id, estado: {$ne:'Borrado'}};
         console.log(query);
         const clientes = await cliente.find(query)
     

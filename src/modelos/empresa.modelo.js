@@ -38,6 +38,16 @@ const schemaEmpresa = new Schema({
         required: true,
         trim: true
     },
+    tipoEmpresa: {        //Administrador-Laboratorio-Cliente 
+        type: String,
+        required: true,
+        trim: true
+    },
+    menu_Id: {        //Menu asociado 
+        type: String,
+        required: true,
+        trim: true
+    },
     envioEmail: {
         emailEnvio: {
             type: String,
@@ -67,6 +77,10 @@ const schemaEmpresa = new Schema({
             type: String,
             trim: true
         },
+    },
+    nombreLogo: {        //Menu asociado 
+        type: String,
+        trim: true
     },
     usuarioCrea_id: {
         type: String,

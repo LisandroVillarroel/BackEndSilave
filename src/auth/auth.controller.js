@@ -18,7 +18,8 @@ exports.createUsuario = (req, res, next) => {
         apellidoMaterno: req.body.apellidoMaterno,
         empresa: {
             empresa_Id: req.body.empresa.empresa_Id,
-            rutEmpresa: req.body.empresa.rutEmpresa
+            rutEmpresa: req.body.empresa.rutEmpresa,
+            menu_Id: req.body.empresa.menu_Id
         }
     }
     Usuario.create (newUsuario,(err, _usuario) => {
@@ -47,7 +48,10 @@ exports.loginUsuario = (req,res,next) => {
     }
     console.log('datos: ',DatoUsuario)
     Usuario.login({usuario: DatoUsuario.usuario},(err,_usuario) => {
-        if(err) return res.status(500).send('Error Servidor');
+        if(err) {
+            console.log('error: ',err);
+            return res.status(500).send('Error Servidor');
+        }
         if (!_usuario){
             // Usuario No existe
 
@@ -69,7 +73,7 @@ exports.loginUsuario = (req,res,next) => {
                 //    SECRET_KEY, {
                 //        expiresIn: expiresIn
                 //    })
-
+                    console.log('usuario:',_usuario);
                     const usuarioDato = {
                         _id: _usuario._id,
                         usuario: _usuario.usuario,
@@ -79,11 +83,18 @@ exports.loginUsuario = (req,res,next) => {
                         empresa: {
                             empresa_Id: _usuario.empresa.empresa_Id,
                             rutEmpresa: _usuario.empresa.rutEmpresa,
+                            menu_Id: _usuario.empresa.menu_Id,
+                            tipoEmpresa: _usuario.empresa.tipoEmpresa,
                         },
-                        accessToken: accessToken
-                        
+                        cliente:{
+                            idCliente: _usuario.cliente.idCliente,
+                            nombreFantasia: _usuario.cliente.nombreFantasia,
+                        },
+                        accessToken: accessToken,
+
                      ////   expiresIn: expiresIn
                       }
+                      console.log('token',usuarioDato);
                 res.send({usuarioDato});
             }
             else {

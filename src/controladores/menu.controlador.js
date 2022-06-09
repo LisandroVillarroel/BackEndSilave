@@ -176,7 +176,7 @@ async function eliminarMenu(req,res) {
 async function buscarTodosMenu(req,res) {
     try {
         
-            query={'empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        query={estado: {$ne:'Borrado'}};
         
         console.log('query menu:',query);
         const menus = await menu.find(query) //.sort('nombrePaciente');
@@ -198,7 +198,37 @@ async function buscarTodosMenu(req,res) {
         return res.status(200).json(respuesta);
       }   
 }
-//next pasa a la siguiente función
+
+async function buscarMenuNombre(req,res) {
+
+   
+    // si encontro información reemplaza información
+    try {
+        query={nombreMenu:req.params.nombreM,estado: {$ne:'Borrado'}};
+        
+        const menu_resp = await menu.find(query).sort('nombreMenu');
+
+        respuesta = {
+            error: false, 
+            data: menu_resp,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+       
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: error.codigo, 
+          mensaje: error
+         };
+          console.log(respuesta);
+          return res.status(error.codigo).json(respuesta);
+      }   
+
+}
+
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
@@ -216,5 +246,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearMenu,actualizarMenu,buscarMenu,eliminarMenu,buscarTodosMenu,buscaId
+    crearMenu,actualizarMenu,buscarMenu,eliminarMenu,buscarTodosMenu,buscarMenuNombre,buscaId
 }

@@ -44,6 +44,26 @@ const schemaUsuario = new Schema({
             required: true,
             trim: true
         },
+        menu_Id: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        tipoEmpresa: {
+            type: String,
+            required: true,
+            trim: true
+        },
+    },
+    cliente: {
+        idCliente: {
+            type: String,
+            trim: true
+        },
+        nombreFantasia: {
+            type: String,
+            trim: true
+        },
     },
     estado: { 
         type: String, 

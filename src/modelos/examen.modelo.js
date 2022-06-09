@@ -27,6 +27,11 @@ const schemaExamen = new Schema({
         required: true,
         trim: true
     },
+    nombreExamen: {
+        type: String,
+        required: true,
+        trim: true  
+    },
     usuarioCrea_id: {
         type: String,
         required: false,

@@ -99,8 +99,6 @@ function buscarEmpresa(req,res) {
             codigo: 500, 
             mensaje: req.body.error
         };
-        console.log('paso 1',respuesta);
-        console.log(respuesta);
         return res.status(500).json(respuesta);
     }
 
@@ -178,6 +176,7 @@ async function buscarTodosEmpresa(req,res) {
     try {
         query={estado: {$ne:'Borrado'}};
         const empresas = await empresa.find(query).sort('razonSocial');
+        console.log('empresas 1:', empresas);
         respuesta = {
             error: false, 
             data: empresas,
@@ -198,13 +197,9 @@ async function buscarTodosEmpresa(req,res) {
 }
 //next pasa a la siguiente función
 async function buscaRut(req,res,next){
+    console.log("Datos llegada busca rut:", req.body)
     const newEmpresa = {
-        rutEmpresa: req.body.rutEmpresa,
-        razonSocial: req.body.razonSocial,
-        nombreFantasia: req.body.nombreFantasia,
-        direccion: req.body.direccion,
-        usuarioCrea_id: req.body.usuarioCrea_id,
-        usuarioModifica_id: req.body.usuarioModifica_id
+        rutEmpresa: req.body.rutEmpresa
     }
     try {
         let query={};

@@ -4,13 +4,15 @@ const upload_ = require('../middelware/multer');
 const path = require('path');
 
 module.exports = (router) => {
-    router.post('/ficha',  Fichas.crearFicha);
+    router.post('/ficha/:numCorrelativo',  Fichas.crearFicha);
     router.put('/ficha/:id',permiso, Fichas.buscaId, Fichas.actualizarFicha);
     router.get('/ficha/:id',permiso, Fichas.buscaId, Fichas.buscarFicha);
     router.delete('/ficha/:id/:idUsu',permiso, Fichas.buscaId, Fichas.eliminarFicha);
     router.get('/fichaTodo/:empresaId/:estadoFicha/:usuario/:privilegio', permiso, Fichas.buscarTodosFicha);
 
-    router.post('/fichaSubeArchivo/:empresa_id/:rutEmpresa/:nombreExamen/:numFicha', permiso, upload_(),Fichas.subeArchivo);
+    router.post('/fichaSubeArchivo/:ficha_id', permiso, upload_(),Fichas.envioCorreo);
+    router.post('/envioExamenCorreo/:ficha_id', permiso,Fichas.envioCorreo);
+    //router.post('/fichaSubeArchivo/:empresa_id/:rutEmpresa/:nombreExamen/:numFicha/:ficha_id', permiso, upload_(),Fichas.subeArchivo);
     
   /*  router.post('/fichaSubeArchivo/:directorio', upload_(),(req,res)=>{
         console.log('paso sube:',req.file);

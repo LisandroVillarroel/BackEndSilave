@@ -6,5 +6,6 @@ module.exports = (router) => {
     router.put('/menu/:id',permiso, Menus.buscaId, Menus.actualizarMenu);
     router.get('/menu/:id',permiso, Menus.buscaId, Menus.buscarMenu);
     router.delete('/menu/:id/:idUsu',permiso, Menus.buscaId, Menus.eliminarMenu);
-    router.get('/menuTodo/:empresaId', permiso, Menus.buscarTodosMenu);
+    router.get('/menuNombre/:nombreM',permiso, Menus.buscarMenuNombre);
+    router.get('/menuTodo', permiso, Menus.buscarTodosMenu);
 }

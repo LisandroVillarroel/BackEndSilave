@@ -16,12 +16,30 @@ async function crearFicha(req,res) {
         return res.status(200).json(respuesta);
     }
     try {
+        let parametroEmp= parametro;
 
-        const parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
+        console.log('correlativo:',req.params.numCorrelativo);
+
+        if (req.params.numCorrelativo==='1'){  // El 0 indica que es la primera vez que entra
+            console.log('paso1');
+            parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
+        }else{
+            console.log('paso2');
+          //  query={'empresa_id':req.body.empresa.empresa_Id,estado: {$ne:'Borrado'}};
+          //  parametroEmp= await parametro.find(query)//  {new: true}  devuelve el documento
+          parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+0}}, {new: true})// mantiene el {new: true}  devuelve el documento
+            
+        }
+        
         const ficha_resp = await new ficha(req.body).save();
-        
-        await ficha.updateOne({_id: ficha_resp._id},{ 'fichaC.numeroFicha': parametroEmp.letra+parametroEmp.numeroFicha}) 
-        
+        console.log('parametro:',parametroEmp);
+        console.log('ficha_resp._id:',ficha_resp._id);
+        console.log('parametroEmp.letra:',parametroEmp.letra);
+        console.log('parametroEmp.numeroFicha:',parametroEmp.numeroFicha);
+        console.log('req.params.numCorrelativo:',req.params.numCorrelativo);
+        console.log('numero concatenado:',parametroEmp.letra+parametroEmp.numeroFicha+req.params.numCorrelativo);
+        const update_resp = await ficha.updateOne({_id: ficha_resp._id},{  'fichaC.numeroFicha': parametroEmp.letra+parametroEmp.numeroFicha+req.params.numCorrelativo, 'fichaC.id_Ficha': parametroEmp.letra+parametroEmp.numeroFicha}, {new: true});
+        console.log('update:',update_resp);
         respuesta = {
             error: false, 
             data: ficha_resp,
@@ -38,21 +56,54 @@ async function crearFicha(req,res) {
             codigo: 500, 
             mensaje: error
         };
+        console.log(respuesta);
         return res.status(500).json(respuesta);
     }   
 }
 
-async function subeArchivo(req,res) {
+async function envioCorreo(req,res) {
     
     try {
-  
         let query={};
-        query={_id: req.params.empresa_id, estado: {$ne:'Borrado'}};
+
+        query={_id: req.params.ficha_id, estado: {$ne:'Borrado'}};
+        const ficha_ = await ficha.find(query)
+
+      //  console.log('ficha:',ficha_);
+        query={_id: ficha_[0].empresa.empresa_Id, estado: {$ne:'Borrado'}};
         const empresa_ = await empresa.find(query)
 
-        
+     //   console.log('envia email empresa:',empresa_);
         if (empresa_!=null){
-            mailer.enviar_mail(empresa_,req.params.nombreExamen,req.params.numFicha,req.params.empresa_id);
+      //      console.log('paso email 1');
+            let mailOptions = {
+                envioEmail:{
+                    emailEnvio: empresa_[0].envioEmail.emailEnvio,
+                    password: empresa_[0].envioEmail.password,
+                    nombreDesde: empresa_[0].envioEmail.nombreDesde,
+                    asunto: empresa_[0].envioEmail.asunto,
+                    tituloCuerpo: empresa_[0].envioEmail.tituloCuerpo,
+                    tituloCuerpoMedio: empresa_[0].envioEmail.tituloCuerpoMedio,
+                    tituloCuerpoPie: empresa_[0].envioEmail.tituloCuerpoPie
+                },
+                correoEnvioCliente: ficha_[0].fichaC.cliente.correoEnvioCliente,
+                rutEmpresa: empresa_[0].rutEmpresa,
+                nombreExamen: ficha_[0].fichaC.examen.nombre,
+                numFicha: ficha_[0].fichaC.numeroFicha
+              };
+            mailer.enviar_mail(mailOptions, function (err,info) {
+                if(err)
+                    {
+                        respuesta = {
+                            error: true, 
+                            data: '',
+                            codigo: 500, 
+                            mensaje: error
+                        };
+                        return res.status(500).json(respuesta);
+                    }
+            }
+            );
         }
         respuesta = {
             error: false, 
@@ -75,7 +126,7 @@ async function subeArchivo(req,res) {
 }
 
 async function descargaArchivo(req,res) {
-    console.log('pasoooo sube arch');
+   // console.log('pasoooo sube arch');
     
     try {
   
@@ -140,7 +191,7 @@ async function actualizarFicha(req,res) {
         };
        
         
-        console.log('respuesta envia',);
+     //   console.log('respuesta envia',);
         res.status(200).json(respuesta)
     } catch(error) {
         respuesta = {
@@ -212,8 +263,8 @@ async function eliminarFicha(req,res) {
 
     // si encontro información reemplaza información
     try {
-        console.log('antes de eliminar:',req.params.id)
-        console.log('antes de eliminar2:',req.params.idUsu)
+     //   console.log('antes de eliminar:',req.params.id)
+      //  console.log('antes de eliminar2:',req.params.idUsu)
         
         queryModifica={usuarioModifica_id: req.params.idUsu, estado:'Borrado'};
         await ficha.updateOne({_id: req.params.id},queryModifica) 
@@ -251,7 +302,6 @@ async function buscarTodosFicha(req,res) {
         }else{
             query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
         }
-        console.log('query ficha:',query);
         const fichas = await ficha.find(query).sort('nombrePaciente');
         respuesta = {
             error: false, 
@@ -289,5 +339,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearFicha,subeArchivo,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscaId
+    crearFicha,envioCorreo,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscaId
 }

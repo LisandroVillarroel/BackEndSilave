@@ -9,5 +9,6 @@ module.exports = (router) => {
     router.put('/usuarioContrasenaReset/:id', Usuarios.buscaId, Usuarios.actualizarUsuarioContrasenaReset);
     router.get('/usuario/:id',permiso, Usuarios.buscaId, Usuarios.buscarUsuario);
     router.delete('/usuario/:id/:idUsu',permiso, Usuarios.buscaId, Usuarios.eliminarUsuario);
-    router.get('/usuarioTodo/:empresaId', permiso, Usuarios.buscarTodosUsuarios);
+    router.get('/usuarioTodo/:empresaId/:idCliente', permiso, Usuarios.buscarTodosUsuariosEmpresa);
+    router.get('/usuarioTodo', permiso, Usuarios.buscarTodosUsuarios);
 }

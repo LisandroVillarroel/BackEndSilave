@@ -56,7 +56,7 @@ const schemaMenu = new Schema({
             },
         }],
     }],
-    empresa_Id: {
+    nombreMenu: {
         type: String,
         required: true,
         trim: true

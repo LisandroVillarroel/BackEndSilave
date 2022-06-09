@@ -38,6 +38,11 @@ const schemaCliente = new Schema({
         required: true,
         trim: true
     },
+    emailEnvioExamenCliente: {
+        type: String,
+        required: true,
+        trim: true
+    },
     usuarioCrea_id: {
         type: String,
         required: false,
@@ -49,6 +54,16 @@ const schemaCliente = new Schema({
         trim: true
     },
     empresa_Id: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    tipoEmpresa: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    menu_Id: {
         type: String,
         required: true,
         trim: true

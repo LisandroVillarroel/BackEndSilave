@@ -52,6 +52,7 @@ async function crearUsuario(req,res) {
 async function actualizarUsuario(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
+        console.log('error1');
         respuesta = {
             error: true, 
             data: '',
@@ -86,6 +87,7 @@ async function actualizarUsuario(req,res) {
         };
         res.status(200).json(respuesta)
     } catch(error) {
+        console.log('error2');
         respuesta = {
           error: true, 
           data: '',
@@ -373,8 +375,8 @@ async function eliminarUsuario(req,res) {
 
 async function buscarTodosUsuarios(req,res) {
     try {
+        query={estado: {$ne:'Borrado'}};
         
-        query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
         const usuarios = await usuario.find(query).sort('apellidoPaterno');
         respuesta = {
             error: false, 
@@ -395,7 +397,34 @@ async function buscarTodosUsuarios(req,res) {
       }   
 }
 
-
+async function buscarTodosUsuariosEmpresa(req,res) {
+    try {
+        if(req.params.idCliente==='Laboratorio'){
+            query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        }
+        else{
+            query={'empresa.empresa_Id':req.params.empresaId,'cliente.idCliente':req.params.idCliente,estado: {$ne:'Borrado'}};
+        }
+        console.log('usuario todo:',query);
+        const usuarios = await usuario.find(query).sort('apellidoPaterno');
+        respuesta = {
+            error: false, 
+            data: usuarios,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
+}
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
@@ -428,5 +457,5 @@ async function buscaUsuario(req,res,next){
 }
 
 module.exports = {
-    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscaId,buscaUsuario
+    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscarTodosUsuariosEmpresa,buscaId,buscaUsuario
 }

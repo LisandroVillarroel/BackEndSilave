@@ -4,9 +4,15 @@ mongoose.set('useCreateIndex', true);
 
 const schemaFicha = new Schema({
     fichaC:{
+       
         numeroFicha: {
             type: String,
             unique: true,
+          //  trim: true
+        },
+        id_Ficha: {
+            type: String,
+            unique: false,
           //  trim: true
         },
         cliente:{
@@ -27,6 +33,11 @@ const schemaFicha = new Schema({
                 
             },
             nombreFantasia: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            correoEnvioCliente: {
                 type: String,
                 required: true,
                 trim: true
@@ -100,6 +111,11 @@ const schemaFicha = new Schema({
                 trim: true
             },
             nombre: {
+                type: String,
+                required: true,
+                trim: true  
+            },
+            nombreExamen: {
                 type: String,
                 required: true,
                 trim: true  
@@ -234,6 +250,11 @@ const schemaFicha = new Schema({
             required: true,
             trim: true
         },
+        nombreLogo: {
+            type: String,
+            trim: true
+        },
+        
     },
     estadoFicha:{
         type: String, 

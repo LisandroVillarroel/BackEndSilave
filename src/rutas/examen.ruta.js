@@ -6,5 +6,5 @@ module.exports = (router) => {
     router.put('/examen/:id',permiso, Examenes.buscaId, Examenes.actualizarExamen);
     router.get('/examen/:id',permiso, Examenes.buscaId, Examenes.buscarExamen);
     router.delete('/examen/:id/:idUsu',permiso, Examenes.buscaId, Examenes.eliminarExamen);
-    router.get('/examenTodo/:empresaId', permiso, Examenes.buscarTodosExamen);
+    router.get('/examenTodo/:empresaId', Examenes.buscarTodosExamen);
 }

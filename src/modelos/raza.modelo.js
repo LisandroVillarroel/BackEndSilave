@@ -7,6 +7,11 @@ const schemaRaza = new Schema({
         required: true,
         trim: true
     },
+    especieNombre:{ 
+        type: String,
+        required: true,
+        trim: true
+    },
     usuarioCrea_id: {
         type: String,
         required: false,

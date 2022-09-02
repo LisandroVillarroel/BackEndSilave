@@ -1,21 +1,23 @@
 'use strict'
 const nodemailer = require('nodemailer');
 const path_ = require('path');
+const usuEnvioClienteCorreo = require('./../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
+const pswEnvioClienteCorreo = require('./../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
 
 require('dotenv').config();
-this.enviar_mail = (dato) => {
+this.enviar_mail_cliente_Final = (dato) => {
     console.log('envio correo:',dato);
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: dato.envioEmail.emailEnvio,
-            pass: dato.envioEmail.password
+            user: usuEnvioClienteCorreo,//dato.envioEmail.emailEnvio,
+            pass: pswEnvioClienteCorreo  //dato.envioEmail.password
         }
     });
     let mail_options = {
         from: 'Pabs',
-        to: dato.correoRecepcionCliente, //'lisandrovillarroell@gmail.com'
-        subject: dato.envioEmail.asunto,
+        to: dato.correoClienteFinal, //'lisandrovillarroell@gmail.com'
+        subject: dato.envioEmail.asunto ,
         html: `
             <table border="0" cellpadding="0" cellspacing="0" width="600px" background-color="#2d3436" bgcolor="#2d3436">
                 <tr height="200px">  
@@ -36,14 +38,14 @@ this.enviar_mail = (dato) => {
      `,
      attachments: [
         { // Use a URL as an attachment
-          filename: dato.nombreExamen+'-'+dato.numFicha+'.pdf',
+          filename: 'hemograma-'+dato.numFicha+'.pdf',
           path:  path_.join(__dirname,'../../public/pdfs/'+dato.rutEmpresa.slice(0, -2)+'/'+ dato.numFicha+'.pdf')
       }
     ]
     };
     transporter.sendMail(mail_options, (error, info) => {
         if (error) {
-            console.log('errorrrr:',error);
+            console.log(error);
         } else {
             console.log('El correo se envío correctamente ' + info.response);
         }

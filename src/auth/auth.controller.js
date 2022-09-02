@@ -46,7 +46,7 @@ exports.loginUsuario = (req,res,next) => {
         usuario: req.body.usuario,
         contrasena: req.body.contrasena
     }
-    console.log('datos: ',DatoUsuario)
+   // console.log('datos: ',DatoUsuario)
     Usuario.login({usuario: DatoUsuario.usuario},(err,_usuario) => {
         if(err) {
             console.log('error: ',err);
@@ -64,7 +64,7 @@ exports.loginUsuario = (req,res,next) => {
                     sub: _usuario.id,
                     iat: moment().unix,
                     //exp: moment().add(24 * 60 * 60,'minute').unix()
-                    exp: moment().add(14,'minute').unix()  // tiempo que expira token
+                    exp: moment().add(1,'d').unix()  // tiempo que expira token 1 día
                 }
                 const accessToken = jwt.encode(payload,codSecretoToken.SECRET_KEY);
 
@@ -73,7 +73,7 @@ exports.loginUsuario = (req,res,next) => {
                 //    SECRET_KEY, {
                 //        expiresIn: expiresIn
                 //    })
-                    console.log('usuario:',_usuario);
+                //    console.log('usuario:',_usuario);
                     const usuarioDato = {
                         _id: _usuario._id,
                         usuario: _usuario.usuario,
@@ -94,7 +94,7 @@ exports.loginUsuario = (req,res,next) => {
 
                      ////   expiresIn: expiresIn
                       }
-                      console.log('token',usuarioDato);
+                   //   console.log('token',usuarioDato);
                 res.send({usuarioDato});
             }
             else {

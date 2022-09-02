@@ -425,6 +425,31 @@ async function buscarTodosUsuariosEmpresa(req,res) {
         return res.status(500).json(respuesta);
       }   
 }
+
+async function buscarTodosUsuariosEmpresaLaboratorio(req,res) {
+    try {
+        
+        query={'empresa.empresa_Id':req.params.empresaId,'cliente.idCliente':'',estado: {$ne:'Borrado'}};
+        console.log('usuario todo Doctor:',query);
+        const usuarios = await usuario.find(query).sort('apellidoPaterno');
+        respuesta = {
+            error: false, 
+            data: usuarios,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
+}
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
@@ -457,5 +482,5 @@ async function buscaUsuario(req,res,next){
 }
 
 module.exports = {
-    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscarTodosUsuariosEmpresa,buscaId,buscaUsuario
+    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscarTodosUsuariosEmpresa,buscarTodosUsuariosEmpresaLaboratorio,buscaId,buscaUsuario
 }

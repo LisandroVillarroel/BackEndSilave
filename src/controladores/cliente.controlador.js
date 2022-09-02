@@ -1,4 +1,5 @@
 const cliente = require('../modelos/cliente.modelo');
+const empresa = require('../modelos/empresa.modelo');
 
 async function crearCliente(req,res) {
     if(req.body.clientes){             // Si trae información de la búsqueda anterior
@@ -14,6 +15,41 @@ async function crearCliente(req,res) {
     try {
         console.log('agrega', req.body)
         const cliente_resp = await new cliente(req.body).save()
+    
+        respuesta = {
+            error: false, 
+            data: cliente_resp,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        console.log(respuesta);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
+    }   
+}
+
+async function crearClienteEmpresa(req,res) {
+    if(req.body.clientes){             // Si trae información de la búsqueda anterior
+        respuesta = {       
+            error: true, 
+            data: '',
+            codigo: 404, 
+            mensaje: 'Rut Ya existe'
+           };
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
+    }
+    try {
+        console.log('agrega cliente empresa', req.body.empresa[0])
+        const cliente_resp = await new cliente.empresa(req.body.empresa[0]).save()
     
         respuesta = {
             error: false, 
@@ -61,7 +97,7 @@ async function actualizarCliente(req,res) {
     // si encontro información reemplaza información
     try {
         let cliente_actualiza = req.body.clientes[0];
-        
+        console.log('paso modifica:',req.body);
         cliente_actualiza = Object.assign(cliente_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         // const cliente_resp = cliente.save(cliente_actualiza);
         
@@ -87,6 +123,29 @@ async function actualizarCliente(req,res) {
           return res.status(error.codigo).json(respuesta);
       }   
 
+}
+
+async function buscaClientePorRut(req,res) {
+    try {
+        query={rutCliente:req.params.rutCliente, estado: {$ne:'Borrado'}};
+        const clientes = await cliente.find(query).sort('razonSocial');
+        respuesta = {
+            error: false, 
+            data: clientes,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: error.codigo, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }      
 }
 
 function buscarCliente(req,res) {
@@ -146,8 +205,13 @@ async function eliminarCliente(req,res) {
 
     // si encontro información reemplaza información
     try {
-        queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-        await cliente.updateOne({_id: req.params.id},queryModifica) 
+        let cliente_actualiza = req.body.clientes[0];
+        console.log('req.body',req.body);
+        console.log('cliente_actualiza:',cliente_actualiza)
+        console.log('req.params.id:',req.params.id);
+       // queryModifica={'empresa.empresa_Id':,usuarioModifica_id: '', estado:'Borrado'};
+        cliente_actualiza = Object.assign(cliente_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
+        await cliente.updateOne({_id: req.params.id},cliente_actualiza) 
         
         respuesta = {
             error: false, 
@@ -170,10 +234,75 @@ async function eliminarCliente(req,res) {
 
 }
 
+async function buscarEmpresasCliente(req,res) {
+    if(req.body.error){ // Si biene un error de la busueda anterior
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: req.body.error
+           };
+            console.log(respuesta);
+            return res.status(200).json(respuesta);
+    }
+
+    if(!req.body.clientes){             // Si no trae información de la búsqueda anterior
+        respuesta = {       
+            error: true, 
+            data: '',
+            codigo: 404, 
+            mensaje: 'No Encontro el Cliente'
+           };
+            return res.status(200).json(respuesta);
+    }
+
+    // si encontro información reemplaza información
+  try{ 
+
+    console.log('clientessss:',req.body.clientes[0].empresa)
+    let listaIdVeterinaria=[];
+    for (const item of req.body.clientes[0].empresa) {  
+        console.log(`Clientes item: ${JSON.stringify(item)}`)
+        console.log(`Clientes2 item: ${item._id}`)
+        listaIdVeterinaria.push(item.empresa_Id);
+    }
+    //listaIdVeterinaria=listaIdVeterinaria.slice(0,-1)
+    console.log('cadena:',listaIdVeterinaria);
+
+    const empresa_ = await empresa.find({
+        '_id': { $in: listaIdVeterinaria
+           // mongoose.Types.ObjectId('4ed3ede8844f0f351100000c'),
+           // mongoose.Types.ObjectId('4ed3f117a844e0471100000d'), 
+           // mongoose.Types.ObjectId('4ed3f18132f50c491100000e')
+        }
+    });
+console.log('resultado empresa:',empresa_)
+    respuesta = {
+        error: false, 
+        data: empresa_,
+        codigo: 200, 
+        mensaje: 'ok'
+    };
+    console.log(respuesta);
+    return res.status(200).json(respuesta);
+    
+} catch(error) {
+    respuesta = {
+      error: true, 
+      data: '',
+      codigo: 500, 
+      mensaje: error
+     };
+    console.log(respuesta);
+    return res.status(200).json(respuesta);
+  }   
+}
+
 async function buscarTodosCliente(req,res) {
     try {
-        query={empresa_Id:req.params.empresaId, estado: {$ne:'Borrado'}};
+        query={'empresa.empresa_Id':req.params.empresaId, 'empresa.estado':{$ne:'Borrado'},estado: {$ne:'Borrado'}};
         const clientes = await cliente.find(query).sort('razonSocial');
+        console.log('buscarTodosCliente:',clientes);
         respuesta = {
             error: false, 
             data: clientes,
@@ -238,5 +367,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearCliente,actualizarCliente,buscarCliente,eliminarCliente,buscarTodosCliente,buscaRut,buscaId
+    crearCliente,crearClienteEmpresa,actualizarCliente,buscarCliente,eliminarCliente,buscarEmpresasCliente,buscarTodosCliente,buscaClientePorRut,buscaRut,buscaId
 }

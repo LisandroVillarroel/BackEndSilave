@@ -1,24 +1,23 @@
-const formato1 = require('../modelos/formato1.modelo');
+const validador = require('../modelos/validador.modelo');
 
-async function crearFormato1(req,res) {
-console.log('pro: ',req.body)    
-    if(req.body.formatos1){             // Si trae información de la búsqueda anterior
+async function crearValidador(req,res) {
+    if(req.body.validadores){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'Formato Ya existe'
+            mensaje: 'Validador Ya Existe'
            };
-        console.log(respuesta);
-        return res.status(200).json(respuesta);
+            console.log(respuesta);
+            return res.status(200).json(respuesta);
     }
     try {
         console.log('agrega', req.body)
-        const formato1_resp = await new formato1(req.body).save()
+        const validador_resp = await new validador(req.body).save()
     
         respuesta = {
             error: false, 
-            data: formato1_resp,
+            data: validador_resp,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -32,11 +31,11 @@ console.log('pro: ',req.body)
             mensaje: error
         };
         console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
     }   
 }
 
-async function actualizarFormato1(req,res) {
+async function actualizarValidador(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -46,27 +45,26 @@ async function actualizarFormato1(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(200).json(respuesta);
+            return res.status(500).json(respuesta);
     }
 
-    if(!req.body.formatos1){             // Si no trae información de la búsqueda anterior
+    if(!req.body.validadores){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro el Formato'
+            mensaje: 'No Encontro el Validador'
            };
             return res.status(200).json(respuesta);
     }
 
     // si encontro información reemplaza información
     try {
-        let formato1_actualiza = req.body.formatos1[0];
+        let validador_actualiza = req.body.validadores[0];
         
-        formato1_actualiza = Object.assign(formato1_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
-        
-        // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-         await formato1.updateOne({_id: req.params.id},formato1_actualiza) 
+        validador_actualiza = Object.assign(validador_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
+
+         await validador.updateOne({_id: req.params.id},validador_actualiza) 
 
         respuesta = {
             error: false, 
@@ -89,26 +87,27 @@ async function actualizarFormato1(req,res) {
 
 }
 
-function buscarFormato1(req,res) {
+function buscarValidador(req,res) {
    
     if(req.body.error){ // Si biene un error de la busueda anterior
+        
         respuesta = {
             error: true, 
             data: '',
             codigo: 500, 
             mensaje: req.body.error
         };
-        console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
     }
 
-    if(req.body.formatos1){  // si la función de busqueda encontro información
+    if(req.body.validadores){  // si la función de busqueda encontro información
         respuesta = {
             error: false, 
-            data: req.body.formatos1,
+            data: req.body.validadores,
             codigo: 200, 
             mensaje: 'ok'
         };
+     //   console.log('paso 2',respuesta);
         return res.status(200).json(respuesta);
     }
    //si no encontro registros
@@ -116,12 +115,13 @@ function buscarFormato1(req,res) {
         error: false, 
         data: '',
         codigo: 404, 
-        mensaje: 'No encontró el Formato'
+        mensaje: 'No encontró el Validador'
     };
+    console.log('paso 3',respuesta);
     return res.status(200).json(respuesta);
 }
 
-async function eliminarFormato1(req,res) {
+async function eliminarValidador(req,res) {
 
     if(req.body.error){ // Si biene un error de la busueda anterior
         respuesta = {
@@ -131,15 +131,15 @@ async function eliminarFormato1(req,res) {
             mensaje: req.body.error
            };
             console.log(respuesta);
-            return res.status(200).json(respuesta);
+            return res.status(500).json(respuesta);
     }
 
-    if(!req.body.formatos1){             // Si no trae información de la búsqueda anterior
+    if(!req.body.validadores){             // Si no trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
             data: '',
             codigo: 404, 
-            mensaje: 'No Encontro el Formato'
+            mensaje: 'No Encontro el Validador'
            };
             return res.status(200).json(respuesta);
     }
@@ -147,7 +147,7 @@ async function eliminarFormato1(req,res) {
     // si encontro información reemplaza información
     try {
         queryModifica={usuarioModifica_id: '', estado:'Borrado'};
-        await formato1.updateOne({_id: req.params.id},queryModifica) 
+        await validador.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
             error: false, 
@@ -165,18 +165,19 @@ async function eliminarFormato1(req,res) {
           mensaje: error
          };
           console.log(respuesta);
-          return res.status(200).json(respuesta);
+          return res.status(500).json(respuesta);
       }   
 
 }
 
-async function buscarTodosFormato1(req,res) {
+async function buscarTodosValidador(req,res) {
     try {
-        query={estado: {$ne:'Borrado'}};
-        const formatos1 = await formato1.find(query).sort('nombre');
+        query={empresa_Id:req.params.empresaId,estado: {$ne:'Borrado'}};
+        const validadores = await validador.find(query).sort('apellidoPaterno');
+        console.log('validadores 1:', validadores);
         respuesta = {
             error: false, 
-            data: formatos1,
+            data: validadores,
             codigo: 200, 
             mensaje: 'ok'
         };
@@ -189,19 +190,40 @@ async function buscarTodosFormato1(req,res) {
           mensaje: error
          };
         console.log(respuesta);
-        return res.status(200).json(respuesta);
+        return res.status(500).json(respuesta);
       }   
 }
 //next pasa a la siguiente función
+async function buscaRut(req,res,next){
+    console.log("Datos llegada busca rut:", req.body)
+    const newValidador = {
+        rutValidador: req.body.rutValidador,
+        empresa_Id: req.body.rutValidador
+    }
+    try {
+        let query={};
+        query={rutValidador:newValidador.rutValidador, empresa_Id: newValidador.empresa_Id, estado: {$ne:'Borrado'}};
+        console.log(query);
+        const validadores = await validador.find(query)
+    
+        if(!validadores.length) return next(); // si no tiene datos pasa a la siguiente funcion
+        req.body.validadores=validadores;  // si tiene datos los guarda y pasa a la siguiente funcion
+        return next();
+    } catch(error) {
+        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
+        next();
+    }
+}
+
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
-        const formatos1 = await formato1.find(query)
-        if(!formatos1.length) return next(); // si no tiene datos pasa a la siguiente funcion
-        req.body.formatos1=formatos1;  // si tiene datos los guarda y pasa a la siguiente funcion
+        const validadores = await validador.find(query)
+        if(!validadores.length) return next(); // si no tiene datos pasa a la siguiente funcion
+        req.body.validadores=validadores;  // si tiene datos los guarda y pasa a la siguiente funcion
         return next();
     } catch(error) {
         req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
@@ -210,5 +232,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearFormato1,actualizarFormato1,buscarFormato1,eliminarFormato1,buscarTodosFormato1,buscaId
+    crearValidador,actualizarValidador,buscarValidador,eliminarValidador,buscarTodosValidador,buscaRut,buscaId
 }

@@ -8,10 +8,14 @@ module.exports = (router) => {
     router.put('/ficha/:id',permiso, Fichas.buscaId, Fichas.actualizarFicha);
     router.get('/ficha/:id',permiso, Fichas.buscaId, Fichas.buscarFicha);
     router.delete('/ficha/:id/:idUsu',permiso, Fichas.buscaId, Fichas.eliminarFicha);
-    router.get('/fichaTodo/:empresaId/:estadoFicha/:usuario/:privilegio', permiso, Fichas.buscarTodosFicha);
-
-    router.post('/fichaSubeArchivo/:ficha_id', permiso, upload_(),Fichas.envioCorreo);
-    router.post('/envioExamenCorreo/:ficha_id', permiso,Fichas.envioCorreo);
+    router.get('/fichaTodo/:empresaOrigen/:estadoFicha/:usuario/:tipoEmpresa', permiso, Fichas.buscarTodosFicha);
+    router.get('/fichaTodoPorFecha/:empresaOrigen/:estadoFicha/:usuario/:tipoEmpresa/:fechaInicio/:fechaFin', permiso, Fichas.buscarTodosFichaPorFecha);
+    router.get('/fichaTodoVet/:empresaOrigen/:estadoFicha/:usuario', permiso, Fichas.buscarTodosFichaVet);
+    router.get('/fichaTodoPorFechaVet/:empresaOrigen/:estadoFicha/:usuario/:fechaInicio/:fechaFin', permiso, Fichas.buscarTodosFichaPorFechaVet);
+    router.post('/fichaSubeArchivo/:ficha_id', permiso, upload_(),Fichas.envioCorreo);      // Envía correo a Veterinaria
+    router.post('/envioExamenCorreoClienteFinal/:ficha_id', permiso,Fichas.envioCorreoClienteFinal);  // Envia correo a Cliente Final
+    router.post('/envioCorreoSolicitudCliente/:id', permiso,Fichas.envioCorreoSolicitudCliente);  // Envia correo de lña solicitud realizada por Cliente(Veterinaria)
+ //   router.post('/envioExamenCorreo/:ficha_id', permiso,Fichas.envioCorreo);
     //router.post('/fichaSubeArchivo/:empresa_id/:rutEmpresa/:nombreExamen/:numFicha/:ficha_id', permiso, upload_(),Fichas.subeArchivo);
     
   /*  router.post('/fichaSubeArchivo/:directorio', upload_(),(req,res)=>{

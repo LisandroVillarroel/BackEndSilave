@@ -1,35 +1,47 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.set('useCreateIndex', true);
-const schemaExamen = new Schema({
-    codigoExamen: {
-        type: String,
-       // required: true,
-        trim: true
-    },
-    codigoInterno: {
-        type: Number,
-        required: true,
-        trim: true
-    },
-    nombre: {
-        type: String,
-        required: true,
-        trim: true  
-    },
-    sigla: {
+const schemaValidador = new Schema({
+    rutValidador: {
         type: String,
         required: true,
         trim: true
     },
-    precio: {
-        type: Number,
+    nombres: {
+        type: String,
+        required: true,
+        trim: true
+        
+    },
+    apellidoPaterno: {
+        type: String,
         required: true,
         trim: true
     },
-    nombreExamen: {
+    apellidoMaterno: {
         type: String,
-        trim: true  
+        required: true,
+        trim: true
+    },
+    profesion: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    telefono: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    nombreFirma: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    empresa_Id: {
+        type: String,
+        required: true,
+        trim: true
     },
     usuarioCrea_id: {
         type: String,
@@ -37,11 +49,6 @@ const schemaExamen = new Schema({
         trim: true
     },
     usuarioModifica_id: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    empresa_Id: {
         type: String,
         required: true,
         trim: true
@@ -55,5 +62,5 @@ const schemaExamen = new Schema({
     // Guardar Fecha creacion y actualizacion
 });
 
-const examenModel = mongoose.model('tabExamen', schemaExamen);
-module.exports =  examenModel;
+const validadorModel = mongoose.model('tabValidador', schemaValidador);
+module.exports =  validadorModel;

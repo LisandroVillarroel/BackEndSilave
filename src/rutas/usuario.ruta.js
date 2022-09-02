@@ -10,5 +10,6 @@ module.exports = (router) => {
     router.get('/usuario/:id',permiso, Usuarios.buscaId, Usuarios.buscarUsuario);
     router.delete('/usuario/:id/:idUsu',permiso, Usuarios.buscaId, Usuarios.eliminarUsuario);
     router.get('/usuarioTodo/:empresaId/:idCliente', permiso, Usuarios.buscarTodosUsuariosEmpresa);
+    router.get('/usuarioTodoLaboratorio/:empresaId', permiso, Usuarios.buscarTodosUsuariosEmpresaLaboratorio);
     router.get('/usuarioTodo', permiso, Usuarios.buscarTodosUsuarios);
 }

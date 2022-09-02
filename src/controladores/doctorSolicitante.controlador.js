@@ -197,12 +197,12 @@ async function buscarTodosDoctorSolicitante(req,res) {
  // next pasa a la siguiente función
  async function buscaClienteDoctor(req,res,next){
     try {
-        console.log('busca id cliente: ',req.params);
+       // console.log('busca id cliente: ',req.params);
         let query={};
         query={'cliente.idCliente': req.params.idCliente, estado: {$ne:'Borrado'}};
-        console.log('query:',query)
+       // console.log('query:',query)
         const doctorSolicitantes = await doctorSolicitante.find(query);
-        console.log('respuesta',doctorSolicitantes);
+       // console.log('respuesta',doctorSolicitantes);
         respuesta = {
             error: false, 
             data: doctorSolicitantes,

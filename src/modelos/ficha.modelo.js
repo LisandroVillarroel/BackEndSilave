@@ -37,7 +37,7 @@ const schemaFicha = new Schema({
                 required: true,
                 trim: true
             },
-            correoEnvioCliente: {
+            correoRecepcionCliente: {
                 type: String,
                 required: true,
                 trim: true
@@ -110,6 +110,11 @@ const schemaFicha = new Schema({
                 required: true,
                 trim: true
             },
+            codigoInterno: {
+                type: Number,
+                required: true,
+                trim: true
+            },
             nombre: {
                 type: String,
                 required: true,
@@ -117,31 +122,60 @@ const schemaFicha = new Schema({
             },
             nombreExamen: {
                 type: String,
-                required: true,
                 trim: true  
             },
         },
-       
+        validador:{
+            idValidador:{
+                type: String,
+           //     required: true,
+                trim: true    
+            },
+            rutValidador: {
+                type: String,
+           //     required: true,
+                trim: true
+            },
+            nombres: {
+                type: String,
+           //     required: true,
+                trim: true
+                
+            },
+            apellidoPaterno: {
+                type: String,
+           //     required: true,
+                trim: true
+            },
+            apellidoMaterno: {
+                type: String,
+            //    required: true,
+                trim: true
+            },
+            profesion: {
+                type: String,
+           //     required: true,
+                trim: true
+            },
+            telefono: {
+                type: String,
+           //     required: true,
+                trim: true
+            },
+            nombreFirma: {
+                type: String,
+            //    required: true,
+                trim: true
+            },
+        },
+        correoClienteFinal: {
+            type: String,
+            trim: true
+        },
     },
 
     formatoResultado:{
-        examen:{
-            idExamen:{
-                type: String,
-             //   required: true,
-                trim: true    
-            },
-            codigoExamen: {
-                type: String,
-             //   required: true,
-                trim: true
-            },
-            nombre: {
-                type: String,
-            //    required: true,
-                trim: true  
-            },
-        },
+ 
         hemograma:{
             serieRoja: {
                 IHemogramaSerieRoja:[{
@@ -208,7 +242,70 @@ const schemaFicha = new Schema({
             },
             
            
+        },
+        perfilBioquimico:{
+            resultado:[{
+                parametro: {
+                    type: String,
+                    trim: true
+                },
+                resultado: {
+                    type: String,
+                    trim: true
+                },
+                unidad: {
+                    type: String,
+                    trim: true
+                },
+                caninos: {
+                    type: String,
+                    trim: true
+                },
+                felinos: {
+                    type: String,
+                    trim: true
+                },
+                flag:{
+                    type: Boolean
+                },
+            }],
+            observaciones: {
+                type: String,
+                trim: true
+            },
+        },
+        pruebasDeCoagulacion:{
+            resultado:[{
+                parametro: {
+                    type: String,
+                    trim: true
+                },
+                resultado: {
+                    type: String,
+                    trim: true
+                },
+                unidad: {
+                    type: String,
+                    trim: true
+                },
+                caninos: {
+                    type: String,
+                    trim: true
+                },
+                felinos: {
+                    type: String,
+                    trim: true
+                },
+                flag:{
+                    type: Boolean
+                },
+            }],
+            observaciones: {
+                type: String,
+                trim: true
+            },
         }
+
     },
     datoArchivo:{
         nombreArchivo: {
@@ -256,6 +353,28 @@ const schemaFicha = new Schema({
         },
         
     },
+    ingresadoPor:{
+        tipoEmpresa: {
+            type: String,
+            trim: true
+        },
+        idIngreso: {
+            type: String,
+            trim: true
+        },
+        rutIngreso: {
+            type: String,
+            trim: true
+        },
+        razonSocial: {
+            type: String,
+            trim: true
+        },
+        nombreFactasia: {
+            type: String,
+            trim: true
+        },
+    },
     estadoFicha:{
         type: String, 
         default: 'Ingresado' 
@@ -278,13 +397,18 @@ const schemaFicha = new Schema({
         type: String,
         trim: true  
     },
+    usuarioRecepcionaCrea_id: {
+        type: String,
+        trim: true  
+    },
     fechaHora_envia_crea: { 
-        type: Date, 
-        default: Date.now 
+        type: Date
     },
     fechaHora_envia_modifica:{
-        type: Date, 
-        default: Date.now 
+        type: Date
+    },
+    fechaHora_recepciona_crea: { 
+        type: Date
     },
     estado: { 
         type: String, 

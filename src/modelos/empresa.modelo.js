@@ -78,6 +78,11 @@ const schemaEmpresa = new Schema({
             trim: true
         },
     },
+    correoRecepcionSolicitud: {
+        type: String,
+        required: false,
+        trim: true
+    },
     nombreLogo: {        //Menu asociado 
         type: String,
         trim: true

@@ -5,8 +5,8 @@ const authRoutes = require('./auth/auth.routes.js');
 const clienteRuta = require('./rutas/cliente.ruta.js');
 const propietarioRuta = require('./rutas/propietario.ruta.js');
 const examenRuta = require('./rutas/examen.ruta.js');
-const formatosRuta = require('./rutas/formatos.ruta.js');
-const formato1Ruta = require('./rutas/formato1.ruta.js');
+//const formatosRuta = require('./rutas/formatos.ruta.js');
+//const formato1Ruta = require('./rutas/formato1.ruta.js');
 const fichaRuta = require('./rutas/ficha.ruta.js');
 const empresaRuta = require('./rutas/empresa.ruta.js');
 const accesoRuta = require('./rutas/acceso.ruta.js');
@@ -15,6 +15,7 @@ const especieRuta = require('./rutas/especie.ruta.js');
 const razaRuta = require('./rutas/raza.ruta.js');
 const examenFicha = require('./rutas/examenFicha.ruta.js');
 const doctorSolicitante = require('./rutas/doctorSolicitante.ruta.js');
+const validadores = require('./rutas/validador.ruta.js');
 const parametroRuta = require('./rutas/parametro.ruta.js');
 const menuRuta = require('./rutas/menu.ruta.js');
 
@@ -91,12 +92,12 @@ app.use('./api',router);
 examenRuta(router);
 
 //// formatos
-app.use('./api',router);
-formatosRuta(router);
+//app.use('./api',router);
+//formatosRuta(router);
 
 //// formato1
-app.use('./api',router);
-formato1Ruta(router);
+//app.use('./api',router);
+//formato1Ruta(router);
 
 //// ficha
 app.use('./api',router);
@@ -129,6 +130,10 @@ examenFicha(router);
 //// Doctor Solicitante
 app.use('./api',router);
 doctorSolicitante(router);
+
+//// Doctor Validadores
+app.use('./api',router);
+validadores(router);
 
 //// parametro
 app.use('./api',router);

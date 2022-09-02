@@ -109,7 +109,7 @@ function buscarEmpresa(req,res) {
             codigo: 200, 
             mensaje: 'ok'
         };
-        console.log('paso 2',respuesta);
+     //   console.log('paso 2',respuesta);
         return res.status(200).json(respuesta);
     }
    //si no encontro registros
@@ -170,6 +170,30 @@ async function eliminarEmpresa(req,res) {
           return res.status(500).json(respuesta);
       }   
 
+}
+
+async function buscarTodosEmpresaListado(req,res) {
+    try {
+        query={_id:{$all:[req.params.listaEmp]},estado: {$ne:'Borrado'}};
+        const empresas = await empresa.find(query).sort('razonSocial');
+        console.log('empresas 1:', empresas);
+        respuesta = {
+            error: false, 
+            data: empresas,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
 }
 
 async function buscarTodosEmpresa(req,res) {
@@ -233,5 +257,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearEmpresa,actualizarEmpresa,buscarEmpresa,eliminarEmpresa,buscarTodosEmpresa,buscaRut,buscaId
+    crearEmpresa,actualizarEmpresa,buscarEmpresa,eliminarEmpresa,buscarTodosEmpresaListado,buscarTodosEmpresa,buscaRut,buscaId
 }

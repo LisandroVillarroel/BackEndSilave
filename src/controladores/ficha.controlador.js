@@ -1,10 +1,18 @@
 const ficha = require('../modelos/ficha.modelo');
 const empresa = require('../modelos/empresa.modelo');
+const cliente = require('../modelos/cliente.modelo');
 const parametro = require('../modelos/parametro.modelo');
 
 const mailer = require('./../template/envioCorreo')
+const mailerClienteFinal = require('./../template/envioCorreoClienteFinal')
+const mailerRecepcionSolicitudEmpresa = require('./../template/envioCorreoRecepcionSolicitudEmpresa')
+
+var ISODate = require('isodate');
+//const moment = require('moment');
+var moment = require('moment-timezone');
+
 async function crearFicha(req,res) {
-    console.log('pasoooo');
+    console.log('pasoooo:',req.body);
     if(req.body.fichas){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
@@ -76,6 +84,7 @@ async function envioCorreo(req,res) {
      //   console.log('envia email empresa:',empresa_);
         if (empresa_!=null){
       //      console.log('paso email 1');
+            console.log('paso email 111',empresa_[0]);
             let mailOptions = {
                 envioEmail:{
                     emailEnvio: empresa_[0].envioEmail.emailEnvio,
@@ -86,12 +95,150 @@ async function envioCorreo(req,res) {
                     tituloCuerpoMedio: empresa_[0].envioEmail.tituloCuerpoMedio,
                     tituloCuerpoPie: empresa_[0].envioEmail.tituloCuerpoPie
                 },
-                correoEnvioCliente: ficha_[0].fichaC.cliente.correoEnvioCliente,
+                correoRecepcionCliente: ficha_[0].fichaC.cliente.correoRecepcionCliente,
                 rutEmpresa: empresa_[0].rutEmpresa,
                 nombreExamen: ficha_[0].fichaC.examen.nombre,
                 numFicha: ficha_[0].fichaC.numeroFicha
               };
+              console.log('paso email 2222',mailOptions);
             mailer.enviar_mail(mailOptions, function (err,info) {
+                if(err)
+                    {
+                        respuesta = {
+                            error: true, 
+                            data: '',
+                            codigo: 500, 
+                            mensaje: error
+                        };
+                        return res.status(500).json(respuesta);
+                    }
+            }
+            );
+        }
+        respuesta = {
+            error: false, 
+            data: '',
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        console.log(respuesta);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+    }   
+}
+
+async function envioCorreoClienteFinal(req,res) {
+    
+    try {
+        let query={};
+
+        query={_id: req.params.ficha_id, estado: {$ne:'Borrado'}};
+        const ficha_ = await ficha.find(query)
+
+      //  console.log('ficha:',ficha_);
+        query={_id: ficha_[0].fichaC.cliente.idCliente, 'empresa.empresa_Id': ficha_[0].empresa.empresa_Id, estado: {$ne:'Borrado'}};
+        const cliente_ = await cliente.find(query)
+
+        if (cliente_!=null){
+            console.log('paso email 1',cliente_[0]);
+            let mailOptions = {
+                envioEmail:{
+                  //  emailEnvio: empresa_[0].envioEmail.emailEnvio,
+                  //  password: empresa_[0].envioEmail.password,
+                    nombreDesde: cliente_[0].empresa[0].envioEmail.nombreDesde,
+                    asunto: cliente_[0].empresa[0].envioEmail.asunto,
+                    tituloCuerpo: cliente_[0].empresa[0].envioEmail.tituloCuerpo,
+                    tituloCuerpoMedio: cliente_[0].empresa[0].envioEmail.tituloCuerpoMedio,
+                    tituloCuerpoPie: cliente_[0].empresa[0].envioEmail.tituloCuerpoPie
+                },
+                correoClienteFinal: ficha_[0].fichaC.correoClienteFinal,
+                rutEmpresa: ficha_[0].empresa.rutEmpresa,
+              //  rutEmpresa: cliente_[0].rutCliente,
+                nombreExamen: ficha_[0].fichaC.examen.nombre,
+                numFicha: ficha_[0].fichaC.numeroFicha
+              };
+              console.log('paso email 2',mailOptions);
+              mailerClienteFinal.enviar_mail_cliente_Final(mailOptions, function (err,info) {
+                if(err)
+                    {
+                        respuesta = {
+                            error: true, 
+                            data: '',
+                            codigo: 500, 
+                            mensaje: error
+                        };
+                        return res.status(500).json(respuesta);
+                    }
+            }
+            );
+        }
+        respuesta = {
+            error: false, 
+            data: '',
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        console.log(respuesta);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+    }   
+}
+
+async function envioCorreoSolicitudCliente(req,res) {
+    
+    try {
+        let query={};
+        console.log('req.params.id:',req.params.id);
+        query={_id: req.params.id, estado: {$ne:'Borrado'}};
+        const ficha_ = await ficha.find(query)
+
+        console.log('ficha_:',ficha_);
+        console.log('ficha_[0].fichaC.numeroFicha:',ficha_[0].fichaC.id_Ficha);
+        query={'fichaC.id_Ficha': ficha_[0].fichaC.id_Ficha, estado: {$ne:'Borrado'}};
+        const fichaExamenes = await ficha.find(query)
+
+        console.log('fichaExamenes:',fichaExamenes);
+        query={_id: ficha_[0].empresa.empresa_Id, estado: {$ne:'Borrado'}};
+        const empresa_ = await empresa.find(query)
+
+        if (empresa_!=null){
+            console.log('paso email 1',empresa_[0]);
+
+            let examenesSolicitados_=[];
+            let examen
+            for (var i = 0; i < fichaExamenes.length; i++) { 
+                console.log('examennnn:',fichaExamenes[i].fichaC.examen.nombre)
+                examen={nombreExamen:fichaExamenes[i].fichaC.examen.nombre};
+                examenesSolicitados_.push(examen);
+            }
+
+            let envioEmailRecepcionEmpresa={
+                  
+                    emailRecepcion: empresa_[0].correoRecepcionSolicitud,
+                    rutCliente: ficha_[0].fichaC.cliente.rutCliente,
+                    nombreFantasiaCliente: ficha_[0].fichaC.cliente.nombreFantasia,
+                    numFicha: ficha_[0].fichaC.numeroFicha,
+                    examenesSolicitados:examenesSolicitados_
+                };
+                
+              console.log('envioEmailRecepcionEmpresa:',envioEmailRecepcionEmpresa);
+              mailerRecepcionSolicitudEmpresa.enviar_mail_recepcion_Solicitud(envioEmailRecepcionEmpresa, function (err,info) {
                 if(err)
                     {
                         respuesta = {
@@ -177,6 +324,28 @@ async function actualizarFicha(req,res) {
     // si encontro información reemplaza información
     try {
         let ficha_actualiza = req.body.fichas[0];
+        console.log('body:',req.body)
+       
+        if (req.body.estadoFicha=='Enviado'){
+            console.log('paso if');
+            const fechaHora_envia_crea=new Date();
+            const fechaHora_envia_modifica=new Date();
+
+            var newDateOptions = {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+        }
+
+           // fechaHora_envia_crea=fechaHora_envia_crea.toISOString('es-CL');
+            //console.log('fechaHora_envia_crea.toLocaleDateString():',moment(fechaHora_envia_crea).format('YYYY-MM-DD HH:mm:ss'););
+   
+        //    fechaHora_envia_crea=fechaHora_envia_crea.toISOString();
+            req.body.fechaHora_envia_crea=fechaHora_envia_crea;
+            req.body.fechaHora_envia_modifica=fechaHora_envia_modifica;
+            console.log(' fechaHora_envia_crea:', fechaHora_envia_crea);
+        }
+        console.log('body:',req.body)
         
         ficha_actualiza = Object.assign(ficha_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         
@@ -292,17 +461,157 @@ async function eliminarFicha(req,res) {
 
 async function buscarTodosFicha(req,res) {
     try {
-        var privilegio_
-        if (req.params.privilegio='Administrador'){
-            privilegio=''
-        }
-   
-        if (req.params.estadoFicha!='Todo'){
-            query={'empresa.empresa_Id':req.params.empresaId,estadoFicha:req.params.estadoFicha,estado: {$ne:'Borrado'}};
+        
+      //  if (req.params.privilegio='Administrador'){
+        console.log('tipo empresa:',req.params.tipoEmpresa)
+        let arr = req.params.estadoFicha.split(','); 
+        if (req.params.tipoEmpresa=='Veterinaria'){
+            
+            if (req.params.estadoFicha!='Todo'){
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:{$in:arr},'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
+            }else{
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
+            }
         }else{
-            query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+            if (req.params.estadoFicha!='Todo'){
+                query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},estado: {$ne:'Borrado'}};
+            }else{
+                query={'empresa.empresa_Id':req.params.empresaOrigen,estado: {$ne:'Borrado'}};
+            }
         }
+        console.log('query ficha:',query);
         const fichas = await ficha.find(query).sort('nombrePaciente');
+        respuesta = {
+            error: false, 
+            data: fichas,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
+}
+
+async function buscarTodosFichaPorFecha(req,res) {
+    try {
+        
+      //  if (req.params.privilegio='Administrador'){
+        console.log('tipo empresa:',req.params.tipoEmpresa)
+      
+        if (req.params.tipoEmpresa=='Veterinaria'){
+   
+            if (req.params.estadoFicha!='Todo'){
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
+            }else{
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
+            }
+        }else{
+            if (req.params.estadoFicha!='Todo'){
+                let arr = req.params.estadoFicha.split(','); 
+                query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},
+                fechaHora_envia_modifica: {
+                    $gte: ISODate(req.params.fechaInicio),
+                    $lte: ISODate(req.params.fechaFin)
+                 },
+                estado: {$ne:'Borrado'}};
+            }else{
+                query={'empresa.empresa_Id':req.params.empresaOrigen,
+                fechaHora_envia_modifica: {
+                    $gte: ISODate(req.params.fechaInicio),
+                    $lte: ISODate(req.params.fechaFin)
+                 },
+                 estado: {$ne:'Borrado'}};
+            }
+        }
+        console.log('query ficha:',query);
+        const fichas = await ficha.find(query).sort('nombrePaciente');
+        respuesta = {
+            error: false, 
+            data: fichas,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
+}
+
+async function buscarTodosFichaVet(req,res) {
+    try {
+        
+      //  if (req.params.privilegio='Administrador'){
+        console.log('tipo empresa:',req.params.tipoEmpresa)
+      
+   
+            if (req.params.estadoFicha!='Todo'){
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,estado: {$ne:'Borrado'}};
+            }else{
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estado: {$ne:'Borrado'}};
+            }
+        
+        console.log('query ficha:',query);
+        const fichas = await ficha.find(query).sort('nombrePaciente');
+        respuesta = {
+            error: false, 
+            data: fichas,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }   
+}
+
+async function buscarTodosFichaPorFechaVet(req,res) {
+    try {
+        
+      //  if (req.params.privilegio='Administrador'){
+        console.log('tipo empresa:',req.params.tipoEmpresa)
+
+            if (req.params.estadoFicha!='Todo'){
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,
+                fechaHora_envia_modifica: {
+                    $gte: ISODate(req.params.fechaInicio),
+                    $lte: ISODate(req.params.fechaFin)
+                 },
+                 estado: {$ne:'Borrado'}};
+
+            }else{
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,
+                fechaHora_envia_modifica: {
+                    $gte: ISODate(req.params.fechaInicio),
+                    $lte: ISODate(req.params.fechaFin)
+                 },
+                 estado: {$ne:'Borrado'}};
+            }
+        
+        const fichas = await ficha.find(query).sort()
+  
+
         respuesta = {
             error: false, 
             data: fichas,
@@ -339,5 +648,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearFicha,envioCorreo,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscaId
+    crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
 }

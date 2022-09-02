@@ -193,6 +193,29 @@ async function buscarTodosParametro(req,res) {
       }   
 }
 
+async function buscarParametroLetra(req,res) {
+    try {
+        query={ letra:req.params.letra, estado: {$ne:'Borrado'}};
+        console.log('letra:',query);
+        const parametros = await parametro.find(query).sort();
+        respuesta = {
+            error: false, 
+            data: parametros,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: 500, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
+      }   
+}
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
@@ -210,5 +233,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearParametro,actualizarParametro,buscarParametro,eliminarParametro,buscarTodosParametro,buscaId
+    crearParametro,actualizarParametro,buscarParametro,eliminarParametro,buscarTodosParametro,buscarParametroLetra,buscaId
 }

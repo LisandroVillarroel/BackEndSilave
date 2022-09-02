@@ -1,7 +1,9 @@
 const especie = require('../modelos/especie.modelo');
+const raza = require('../modelos/raza.modelo');
+
 
 async function crearEspecie(req,res) {
-console.log('pro: ',req.body)    
+//console.log('pro: ',req.body)    
     if(req.body.especies){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
@@ -9,11 +11,11 @@ console.log('pro: ',req.body)
             codigo: 404, 
             mensaje: 'Ya existe'
            };
-        console.log(respuesta);
+        console.log('especie encuentra:',req.body.especies);
         return res.status(200).json(respuesta);
     }
     try {
-        console.log('agrega', req.body)
+      //  console.log('agrega', req.body)
         const especie_resp = await new especie(req.body).save()
     
         respuesta = {
@@ -68,6 +70,22 @@ async function actualizarEspecie(req,res) {
         // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
          await especie.updateOne({_id: req.params.id},especie_actualiza) 
 
+         
+       //   console.log('datos especie:',req.params)
+       //   console.log('empresa:',req.body.especies[0].empresa_Id)
+           await raza.updateMany( {empresa_Id :req.body.especies[0].empresa_Id,especieNombre: req.params.nombreEspecieAnterior}, 
+            {$set:{especieNombre:req.body.especies[0].nombre}} );
+            
+/*
+            query={empresa_Id:"62df0fe82843bc4f9ca6e334",especieNombre:"Felino",estado: {$ne:'Borrado'}};
+        const razaBusca = await raza.find(query).sort();
+
+          
+            for (var i = 0; i < razaBusca.length; i++) {
+                await raza.updateMany( {empresa_Id :req.body.especies[0].empresa_Id,nombre: razaBusca[i].nombre}, 
+                    {$set:{especieNombre:razaBusca[i].especieNombre}} );
+            }
+            */
         respuesta = {
             error: false, 
             data: '',
@@ -146,7 +164,7 @@ async function eliminarEspecie(req,res) {
 
     // si encontro información reemplaza información
     try {
-        queryModifica={usuarioModifica_id: '', estado:'Borrado'};
+        queryModifica={usuarioModifica_id: req.params.idUsu, estado:'Borrado'};
         await especie.updateOne({_id: req.params.id},queryModifica) 
         
         respuesta = {
@@ -197,7 +215,7 @@ async function buscarTodosEspecie(req,res) {
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
     try {
-        console.log('busca id: ',req);
+        console.log('busca id: ',req.params);
         let query={};
         query={_id: req.params.id, estado: {$ne:'Borrado'}};
         const especies = await especie.find(query)

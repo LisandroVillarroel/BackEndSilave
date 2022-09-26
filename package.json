@@ -9,6 +9,10 @@
   },
   "keywords": [],
   "author": "",
+  "engines": {
+    "node": "16.x",
+    "npm": "8.5.5"
+  },
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

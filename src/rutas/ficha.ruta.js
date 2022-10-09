@@ -4,7 +4,7 @@ const upload_ = require('../middelware/multer');
 const path = require('path');
 
 module.exports = (router) => {
-    router.post('/ficha/:numCorrelativo',  Fichas.crearFicha);
+    router.post('/ficha/:numCorrelativo',  Fichas.crearPropietario, Fichas.crearFicha);
     router.put('/ficha/:id',permiso, Fichas.buscaId, Fichas.actualizarFicha);
     router.get('/ficha/:id',permiso, Fichas.buscaId, Fichas.buscarFicha);
     router.delete('/ficha/:id/:idUsu',permiso, Fichas.buscaId, Fichas.eliminarFicha);

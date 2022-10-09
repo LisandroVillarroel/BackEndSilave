@@ -43,9 +43,12 @@ const schemaFicha = new Schema({
                 trim: true
             },
         },
+        rutPropietario: {      
+            type: String,
+            trim: true
+        },
         nombrePropietario: {      
             type: String,
-            required: true,
             trim: true
         },
         nombrePaciente: {

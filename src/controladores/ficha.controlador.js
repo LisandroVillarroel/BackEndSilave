@@ -2,6 +2,7 @@ const ficha = require('../modelos/ficha.modelo');
 const empresa = require('../modelos/empresa.modelo');
 const cliente = require('../modelos/cliente.modelo');
 const parametro = require('../modelos/parametro.modelo');
+const propietario = require('../modelos/propietario.modelo'); 
 
 const mailer = require('./../template/envioCorreo')
 const mailerClienteFinal = require('./../template/envioCorreoClienteFinal')
@@ -10,6 +11,48 @@ const mailerRecepcionSolicitudEmpresa = require('./../template/envioCorreoRecepc
 var ISODate = require('isodate');
 //const moment = require('moment');
 var moment = require('moment-timezone');
+
+async function crearPropietario(req,res) {
+    console.log('pasoooo Propietario:',req.body);
+    if(req.body.fichas){             // Si trae información de la búsqueda anterior
+        respuesta = {       
+            error: true, 
+            data: '',
+            codigo: 404, 
+            mensaje: 'Ya existe'
+           };
+        console.log(respuesta);
+        return res.status(200).json(respuesta);
+    }
+    try {
+        const newPropietario = {
+            rutPropietario:  req.body.FichaC.rutPropietario,
+            nombres: req.body.fichaC.nombrePropietario,
+            apellidoPaterno: '.',
+            apellidoMaterno: '.',
+            region:0,
+            comuna: 0,
+            direccion: '.',
+            telefono: 0,
+            email: '.',
+            usuarioCrea_id: req.body.usuarioCrea_id,
+            usuarioModifica_id: req.body.usuarioModifica_id
+        }
+
+        let query={};
+        query={rutPropietario: req.body.fichaC.rutPropietario, estado: {$ne:'Borrado'}};
+        const fichasPropietario = await ficha.find(query)
+        if(!fichas.length){ 
+             await new ficha(fichasPropietario).save();
+        }
+
+        return next();
+
+    } catch(error) {
+        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
+        next();
+    }
+}
 
 async function crearFicha(req,res) {
     console.log('pasoooo:',req.body);
@@ -648,5 +691,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
+    crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
 }

@@ -192,7 +192,28 @@ async function buscarTodosPropietario(req,res) {
         return res.status(200).json(respuesta);
       }   
 }
-//next pasa a la siguiente función
+async function buscaRut(req,res) {
+    try {
+        query={rutCliente:req.params.rutCliente, estado: {$ne:'Borrado'}};
+        const propietarios = await propietario.find(query).sort();
+        respuesta = {
+            error: false, 
+            data: propietarios,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: error.codigo, 
+          mensaje: error
+         };
+        console.log(respuesta);
+        return res.status(500).json(respuesta);
+      }      
+}
 
  // next pasa a la siguiente función
 async function buscaId(req,res,next){
@@ -210,5 +231,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearPropietario,actualizarPropietario,buscarPropietario,eliminarPropietario,buscarTodosPropietario,buscaId
+    crearPropietario,actualizarPropietario,buscarPropietario,eliminarPropietario,buscarTodosPropietario,buscaRut,buscaId
 }

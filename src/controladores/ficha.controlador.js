@@ -12,7 +12,7 @@ var ISODate = require('isodate');
 //const moment = require('moment');
 var moment = require('moment-timezone');
 
-async function crearPropietario(req,res) {
+async function crearPropietario(req,res,next) {
     console.log('pasoooo Propietario:',req.body);
     if(req.body.fichas){             // Si trae información de la búsqueda anterior
         respuesta = {       
@@ -26,7 +26,7 @@ async function crearPropietario(req,res) {
     }
     try {
         const newPropietario = {
-            rutPropietario:  req.body.FichaC.rutPropietario,
+            rutPropietario:  req.body.fichaC.rutPropietario,
             nombres: req.body.fichaC.nombrePropietario,
             apellidoPaterno: '.',
             apellidoMaterno: '.',
@@ -41,21 +41,24 @@ async function crearPropietario(req,res) {
 
         let query={};
         query={rutPropietario: req.body.fichaC.rutPropietario, estado: {$ne:'Borrado'}};
-        const fichasPropietario = await ficha.find(query)
-        if(!fichas.length){ 
-             await new ficha(fichasPropietario).save();
+        const fichasPropietario = await propietario.find(query)
+        console.log('fichasPropietario',newPropietario)
+        if(!fichasPropietario.length){ 
+            console.log('graba')
+             await new propietario(newPropietario).save();
         }
 
         return next();
 
     } catch(error) {
+        console.log('error',error)
         req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
         next();
     }
 }
 
 async function crearFicha(req,res) {
-    console.log('pasoooo:',req.body);
+  //  console.log('pasoooo:',req.body);
     if(req.body.fichas){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
@@ -63,19 +66,19 @@ async function crearFicha(req,res) {
             codigo: 404, 
             mensaje: 'Ya existe'
            };
-        console.log(respuesta);
+    //    console.log(respuesta);
         return res.status(200).json(respuesta);
     }
     try {
         let parametroEmp= parametro;
 
-        console.log('correlativo:',req.params.numCorrelativo);
+      //  console.log('correlativo:',req.params.numCorrelativo);
 
         if (req.params.numCorrelativo==='1'){  // El 0 indica que es la primera vez que entra
-            console.log('paso1');
+        //    console.log('paso1');
             parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
         }else{
-            console.log('paso2');
+          //  console.log('paso2');
           //  query={'empresa_id':req.body.empresa.empresa_Id,estado: {$ne:'Borrado'}};
           //  parametroEmp= await parametro.find(query)//  {new: true}  devuelve el documento
           parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+0}}, {new: true})// mantiene el {new: true}  devuelve el documento
@@ -83,14 +86,14 @@ async function crearFicha(req,res) {
         }
         
         const ficha_resp = await new ficha(req.body).save();
-        console.log('parametro:',parametroEmp);
-        console.log('ficha_resp._id:',ficha_resp._id);
-        console.log('parametroEmp.letra:',parametroEmp.letra);
-        console.log('parametroEmp.numeroFicha:',parametroEmp.numeroFicha);
-        console.log('req.params.numCorrelativo:',req.params.numCorrelativo);
-        console.log('numero concatenado:',parametroEmp.letra+parametroEmp.numeroFicha+req.params.numCorrelativo);
+       // console.log('parametro:',parametroEmp);
+       // console.log('ficha_resp._id:',ficha_resp._id);
+       // console.log('parametroEmp.letra:',parametroEmp.letra);
+       // console.log('parametroEmp.numeroFicha:',parametroEmp.numeroFicha);
+       // console.log('req.params.numCorrelativo:',req.params.numCorrelativo);
+       // console.log('numero concatenado:',parametroEmp.letra+parametroEmp.numeroFicha+req.params.numCorrelativo);
         const update_resp = await ficha.updateOne({_id: ficha_resp._id},{  'fichaC.numeroFicha': parametroEmp.letra+parametroEmp.numeroFicha+req.params.numCorrelativo, 'fichaC.id_Ficha': parametroEmp.letra+parametroEmp.numeroFicha}, {new: true});
-        console.log('update:',update_resp);
+       // console.log('update:',update_resp);
         respuesta = {
             error: false, 
             data: ficha_resp,
@@ -98,7 +101,7 @@ async function crearFicha(req,res) {
             mensaje: 'ok'
         };
        
-        console.log(respuesta);
+      //  console.log(respuesta);
         res.status(200).json(respuesta)
     } catch(error) {
         respuesta = {
@@ -107,7 +110,7 @@ async function crearFicha(req,res) {
             codigo: 500, 
             mensaje: error
         };
-        console.log(respuesta);
+      //  console.log(respuesta);
         return res.status(500).json(respuesta);
     }   
 }

@@ -378,6 +378,18 @@ const schemaFicha = new Schema({
             trim: true
         },
     },
+    facturacion:{
+        estadoFacturacion: { 
+            type: String, 
+            default: 'Pendiente' 
+        },
+        fechaFacturacion: { 
+            type: Date
+        },
+        fechaPagoFacturacion: { 
+            type: Date
+        },
+    },
     estadoFicha:{
         type: String, 
         default: 'Ingresado' 
@@ -417,6 +429,7 @@ const schemaFicha = new Schema({
         type: String, 
         default: 'Activo' 
     },
+   
 },{
     timestamps: { createdAt: 'fechaHora_crea', updatedAt: 'fechaHora_modifica'}
     // Guardar Fecha creacion y actualizacion

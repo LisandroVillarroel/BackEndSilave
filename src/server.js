@@ -19,6 +19,8 @@ const validadores = require('./rutas/validador.ruta.js');
 const parametroRuta = require('./rutas/parametro.ruta.js');
 const menuRuta = require('./rutas/menu.ruta.js');
 
+const panelVentas = require('./rutas/panelVentas.ruta.js');
+
 const express = require('express');
 const propiedadesDb = require('./config/propiedades');
 const DB = require('./config/db');
@@ -142,6 +144,10 @@ parametroRuta(router);
 //// menu
 app.use('./api',router);
 menuRuta(router);
+
+//// panelVentas
+app.use('./api',router);
+panelVentas(router);
 
 
 router.get('/', (req,res) => {

@@ -261,7 +261,7 @@ async function reseteaUsuarioContrasena(req,res) {
             exp: moment().add(14,'minute').unix()  // tiempo que expira token
         }
         const accessTokenReset = jwt.encode(payload,codSecretoToken.SECRET_KEYRESET);
-        verificaLink=`http://localhost:4200/resetKey/${accessTokenReset}/${req.body.usuarios[0]._id}`
+        verificaLink=`http://${req.params.urlFront}/resetKey/${accessTokenReset}/${req.body.usuarios[0]._id}`
         req.body.usuarios[0].resetToken=accessTokenReset;
         let usuario_actualiza = req.body;
         usuario_actualiza = Object.assign(usuario_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto

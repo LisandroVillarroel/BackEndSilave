@@ -192,9 +192,9 @@ async function buscarTodosPropietario(req,res) {
         return res.status(200).json(respuesta);
       }   
 }
-async function buscaRut(req,res) {
+async function buscarRut(req,res) {
     try {
-        query={rutCliente:req.params.rutCliente, estado: {$ne:'Borrado'}};
+        query={rutPropietario:req.params.rutPropietario, estado: {$ne:'Borrado'}};
         const propietarios = await propietario.find(query).sort();
         respuesta = {
             error: false, 
@@ -231,5 +231,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearPropietario,actualizarPropietario,buscarPropietario,eliminarPropietario,buscarTodosPropietario,buscaRut,buscaId
+    crearPropietario,actualizarPropietario,buscarPropietario,eliminarPropietario,buscarTodosPropietario,buscarRut,buscaId
 }

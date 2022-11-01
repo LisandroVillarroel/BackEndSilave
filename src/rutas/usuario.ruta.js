@@ -3,7 +3,7 @@ const permiso = require('../middelware/permiso');
 
 module.exports = (router) => {
     router.post('/usuario',  Usuarios.crearUsuario);
-    router.get('/resetContrasena/:usuario', Usuarios.buscaUsuario, Usuarios.reseteaUsuarioContrasena); 
+    router.get('/resetContrasena/:usuario/:urlFront', Usuarios.buscaUsuario, Usuarios.reseteaUsuarioContrasena); 
     router.put('/usuario/:id',permiso, Usuarios.buscaId, Usuarios.actualizarUsuario);
     router.put('/usuarioContrasena/:id',permiso, Usuarios.buscaId, Usuarios.actualizarUsuarioContrasena);
     router.put('/usuarioContrasenaReset/:id', Usuarios.buscaId, Usuarios.actualizarUsuarioContrasenaReset);

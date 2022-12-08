@@ -20,6 +20,7 @@ const parametroRuta = require('./rutas/parametro.ruta.js');
 const menuRuta = require('./rutas/menu.ruta.js');
 
 const panelVentas = require('./rutas/panelVentas.ruta.js');
+const fichaFacturas = require('./rutas/fichaFactura.ruta.js');
 
 const express = require('express');
 const propiedadesDb = require('./config/propiedades');
@@ -148,6 +149,10 @@ menuRuta(router);
 //// panelVentas
 app.use('./api',router);
 panelVentas(router);
+
+//// Facturas
+app.use('./api',router);
+fichaFacturas(router);
 
 
 router.get('/', (req,res) => {

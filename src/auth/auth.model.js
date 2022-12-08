@@ -33,38 +33,40 @@ const schemaUsuario = new Schema({
         required: true,
         trim: true
     },
-    empresa: {
-        empresa_Id: {
+    usuarioLaboratorioCliente: {
+        laboratorioCliente_Id: {
             type: String,
             required: true,
             trim: true
         },
-        rutEmpresa: {
+        laboratorioCliente_rut: {
             type: String,
             required: true,
             trim: true
         },
-        menu_Id: {
+        laboratorioCliente_razonSocial: {
             type: String,
             required: true,
             trim: true
         },
-        tipoEmpresa: {
+        laboratorioCliente_nombreFantasia: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        laboratorioCliente_menu_Id: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        laboratorioCliente_tipoEmpresa: {
             type: String,
             required: true,
             trim: true
         },
     },
-    cliente: {
-        idCliente: {
-            type: String,
-            trim: true
-        },
-        nombreFantasia: {
-            type: String,
-            trim: true
-        },
-    },
+   
     estado: { 
         type: String, 
         default: 'Activo' 

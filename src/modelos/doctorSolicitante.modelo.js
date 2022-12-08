@@ -29,11 +29,13 @@ const schemaDoctorSolicitante = new Schema({
         required: true,
         trim: true
     },
+    /*
     empresa_Id: {
         type: String,
         required: true,
         trim: true
     },
+    */
     estado: { 
         type: String, 
         default: 'Activo' 

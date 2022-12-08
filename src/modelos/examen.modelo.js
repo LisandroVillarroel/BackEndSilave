@@ -22,14 +22,19 @@ const schemaExamen = new Schema({
         required: true,
         trim: true
     },
+    nombreExamen: {
+        type: String,
+        trim: true  
+    },
     precio: {
         type: Number,
         required: true,
         trim: true
     },
-    nombreExamen: {
-        type: String,
-        trim: true  
+    diasPreparacion: {
+        type: Number,
+        required: true,
+        trim: true
     },
     usuarioCrea_id: {
         type: String,

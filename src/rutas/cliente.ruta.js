@@ -6,8 +6,8 @@ module.exports = (router) => {
     router.post('/clienteEmpresa', Clientes.crearClienteEmpresa);
     router.put('/cliente/:id',permiso, Clientes.buscaId, Clientes.actualizarCliente);
     router.get('/cliente/:id',permiso, Clientes.buscaId, Clientes.buscarCliente);
-    router.put('/cliente/:id/:idUsu',permiso, Clientes.buscaId, Clientes.eliminarCliente);
+    router.put('/cliente/:id/:empresa_Id/:idUsu',permiso, Clientes.buscaId, Clientes.eliminarCliente);
     router.get('/buscaClientePorRut/:rutCliente',permiso, Clientes.buscaClientePorRut);
-    router.get('/buscarEmpresasCliente/:id', permiso, Clientes.buscaId,Clientes.buscarEmpresasCliente);
+    router.get('/buscarEmpresasCliente/:id', permiso,Clientes.buscarEmpresasCliente);
     router.get('/clienteTodo/:empresaId', permiso, Clientes.buscarTodosCliente);
 }

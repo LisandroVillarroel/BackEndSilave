@@ -1,5 +1,6 @@
 const usuario = require('../modelos/usuario.modelo');
 const empresa = require('../modelos/empresa.modelo');
+const cliente = require('../modelos/cliente.modelo');
 const bcrypt = require('bcryptjs');
 const jwt = require('jwt-simple'); 
 const moment = require('moment');
@@ -374,8 +375,9 @@ async function eliminarUsuario(req,res) {
 }
 
 async function buscarTodosUsuarios(req,res) {
+    /*Rescata todos los usuarios Administrador y Laboratorio*/
     try {
-        query={estado: {$ne:'Borrado'}};
+        query={'usuarioLaboratorioCliente.laboratorioCliente_tipoEmpresa':{$in:['Administrador','Laboratorio']},estado: {$ne:'Borrado'}};
         
         const usuarios = await usuario.find(query).sort('apellidoPaterno');
         respuesta = {
@@ -399,12 +401,20 @@ async function buscarTodosUsuarios(req,res) {
 
 async function buscarTodosUsuariosEmpresa(req,res) {
     try {
-        if(req.params.idCliente==='Laboratorio'){
-            query={'empresa.empresa_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        /*Rescata todos los usuarios por empresa y tipo empresa*/
+        let clientes;
+        let arr=[];
+        arr.push(req.params.empresaId)
+        if (req.params.tipoEmpresa==="Laboratorio"){
+            query={'empresa.empresa_Id':req.params.empresaId};
+            clientes = await cliente.find(query).sort('razonSocial');
+            for (a = 0; a < clientes.length; a++) {
+                arr.push(clientes[a]._id.toString());
+            }
         }
-        else{
-            query={'empresa.empresa_Id':req.params.empresaId,'cliente.idCliente':req.params.idCliente,estado: {$ne:'Borrado'}};
-        }
+        console.log('clientes:',arr);
+
+        query={'usuarioLaboratorioCliente.laboratorioCliente_Id':{$in:arr},estado: {$ne:'Borrado'}}; //'usuarioLaboratorioCliente.laboratorioCliente_tipoEmpresa':req.params.tipoEmpresa
         console.log('usuario todo:',query);
         const usuarios = await usuario.find(query).sort('apellidoPaterno');
         respuesta = {

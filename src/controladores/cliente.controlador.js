@@ -1,5 +1,6 @@
 const cliente = require('../modelos/cliente.modelo');
 const empresa = require('../modelos/empresa.modelo');
+const { ObjectId } = require('mongodb');
 
 async function crearCliente(req,res) {
     if(req.body.clientes){             // Si trae información de la búsqueda anterior
@@ -205,14 +206,25 @@ async function eliminarCliente(req,res) {
 
     // si encontro información reemplaza información
     try {
-        let cliente_actualiza = req.body.clientes[0];
+       /* let cliente_actualiza = req.body.clientes[0];
         console.log('req.body',req.body);
         console.log('cliente_actualiza:',cliente_actualiza)
         console.log('req.params.id:',req.params.id);
        // queryModifica={'empresa.empresa_Id':,usuarioModifica_id: '', estado:'Borrado'};
         cliente_actualiza = Object.assign(cliente_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         await cliente.updateOne({_id: req.params.id},cliente_actualiza) 
-        
+        */
+
+        const fechaActual= new Date();
+
+        //wait cliente.update_One({'_id': req.params.id,'empresa.empresa_Id':req.params.empresa_Id},{$set:{'empresa.usuarioModifica_id':req.params.idUsu,'empresa.estado':'Borrado','empresa.fechaHora_modifica':fechaActual}}) 
+console.log('req.params.empresa_Id:',req.params.empresa_Id );
+console.log('id:',req.params.id)
+        const objectId_=ObjectId(req.params.id);
+
+        await cliente.updateOne( {"_id": objectId_} 
+        , { $set:{"empresa.$[loc].estado":'Borrado' }}, 
+        { arrayFilters: [{ "loc.empresa_Id": req.params.empresa_Id }] }     )
         respuesta = {
             error: false, 
             data: '',
@@ -235,46 +247,33 @@ async function eliminarCliente(req,res) {
 }
 
 async function buscarEmpresasCliente(req,res) {
-    if(req.body.error){ // Si biene un error de la busueda anterior
-        respuesta = {
-            error: true, 
-            data: '',
-            codigo: 500, 
-            mensaje: req.body.error
-           };
-            console.log(respuesta);
-            return res.status(200).json(respuesta);
-    }
-
-    if(!req.body.clientes){             // Si no trae información de la búsqueda anterior
-        respuesta = {       
-            error: true, 
-            data: '',
-            codigo: 404, 
-            mensaje: 'No Encontro el Cliente'
-           };
-            return res.status(200).json(respuesta);
-    }
 
     // si encontro información reemplaza información
   try{ 
 
-    console.log('clientessss:',req.body.clientes[0].empresa)
-    let listaIdVeterinaria=[];
+   // console.log('clientessss:',req.body.clientes[0].empresa)
+  /*  let listaIdVeterinaria=[];
     for (const item of req.body.clientes[0].empresa) {  
         console.log(`Clientes item: ${JSON.stringify(item)}`)
         console.log(`Clientes2 item: ${item._id}`)
         listaIdVeterinaria.push(item.empresa_Id);
     }
+    */
     //listaIdVeterinaria=listaIdVeterinaria.slice(0,-1)
-    console.log('cadena:',listaIdVeterinaria);
+    //console.log('cadena:',listaIdVeterinaria);
+
+    //'_id': { $in: listaIdVeterinaria
+    // }
+ 
+    query={_id:req.params.id, 'empresa.estado':{$ne:'Borrado'},estado: {$ne:'Borrado'}};
+    const clientes = await cliente.find(query).sort('razonSocial');
+    let listaIdCliente=[];
+    for (const item of clientes[0].empresa) {  
+        listaIdCliente.push(item.empresa_Id);
+    }
 
     const empresa_ = await empresa.find({
-        '_id': { $in: listaIdVeterinaria
-           // mongoose.Types.ObjectId('4ed3ede8844f0f351100000c'),
-           // mongoose.Types.ObjectId('4ed3f117a844e0471100000d'), 
-           // mongoose.Types.ObjectId('4ed3f18132f50c491100000e')
-        }
+        '_id': { $in: listaIdCliente}
     });
 console.log('resultado empresa:',empresa_)
     respuesta = {
@@ -300,6 +299,7 @@ console.log('resultado empresa:',empresa_)
 
 async function buscarTodosCliente(req,res) {
     try {
+        console.log(':req.params.empresaId:',req.params.empresaId)
         query={'empresa.empresa_Id':req.params.empresaId, 'empresa.estado':{$ne:'Borrado'},estado: {$ne:'Borrado'}};
         const clientes = await cliente.find(query).sort('razonSocial');
         console.log('buscarTodosCliente:',clientes);

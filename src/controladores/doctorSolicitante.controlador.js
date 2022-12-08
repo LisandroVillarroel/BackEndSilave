@@ -1,4 +1,5 @@
 const doctorSolicitante = require('../modelos/doctorSolicitante.modelo');
+const cliente = require('../modelos/cliente.modelo');
 
 async function crearDoctorSolicitante(req,res) {
 console.log('pro: ',req.body)    
@@ -172,7 +173,16 @@ async function eliminarDoctorSolicitante(req,res) {
 
 async function buscarTodosDoctorSolicitante(req,res) {
     try {
-        query={empresa_Id:req.params.empresaId,estado: {$ne:'Borrado'}};
+        console.log('empresaId:',req.params.empresaId)
+        query={'empresa.empresa_Id':req.params.empresaId, 'empresa.estado':{$ne:'Borrado'},estado: {$ne:'Borrado'}};
+        const clientes = await cliente.find(query).sort('razonSocial');
+        let listaIdCliente=[];
+        for (const item of clientes) {  
+            listaIdCliente.push(item._id);
+        }
+        console.log('clientes:',listaIdCliente)
+    
+        query={'cliente.idCliente': { $in: listaIdCliente},estado: {$ne:'Borrado'}};
         const doctorSolicitantes = await doctorSolicitante.find(query).sort('nombre');
         respuesta = {
             error: false, 

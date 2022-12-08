@@ -6,6 +6,8 @@ const path = require('path');
 module.exports = (router) => {
     router.post('/ficha/:numCorrelativo',  Fichas.crearPropietario, Fichas.crearFicha);
     router.put('/ficha/:id',permiso, Fichas.crearPropietario,Fichas.buscaId, Fichas.actualizarFicha);
+    router.put('/fichaEnvia/:id',permiso, Fichas.crearPropietario,Fichas.buscaId, Fichas.actualizarFichaEnvia);
+    router.put('/fichaCorreo/:id',permiso,Fichas.buscaId, Fichas.actualizarFichaCorreoClienteFinal);
     router.get('/ficha/:id',permiso, Fichas.buscaId, Fichas.buscarFicha);
     router.delete('/ficha/:id/:idUsu',permiso, Fichas.buscaId, Fichas.eliminarFicha);
     router.get('/fichaTodo/:empresaOrigen/:estadoFicha/:usuario/:tipoEmpresa', permiso, Fichas.buscarTodosFicha);

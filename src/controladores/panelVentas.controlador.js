@@ -16,14 +16,14 @@ async function buscaGeneralVentas(req,res) {
         }
     //    const fichas = await ficha.find(query).sort('razonSocial');
 
-    
+    console.log('query:',query)
 
         const valorAnualGeneral = await ficha.aggregate([ 
             {
                 $project:
                   {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
                     precioValorFinal: "$fichaC.examen.precioValorFinal",
@@ -38,7 +38,7 @@ async function buscaGeneralVentas(req,res) {
             } } 
         }])
 
-
+console.log('valorAnualGeneral:',valorAnualGeneral)
         // Extra valor mes 
         if (req.params.idClienteVet=='Todos'){
             query={ano:parseInt(req.params.ano),mes:parseInt(req.params.mes),empresa_Id:req.params.idLaboratorio,
@@ -54,8 +54,8 @@ async function buscaGeneralVentas(req,res) {
             {
             $project:
                 {
-                ano: { $year: "$fechaHora_envia_modifica" },
-                mes: { $month: "$fechaHora_envia_modifica" },
+                ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                 empresa_Id:"$empresa.empresa_Id",
                 idCliente:"$fichaC.cliente.idCliente",
                 precioValorFinal: "$fichaC.examen.precioValorFinal",
@@ -281,8 +281,8 @@ async function buscaVentasComparativoAnterior(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
                     precioValorFinal: "$fichaC.examen.precioValorFinal",
@@ -317,8 +317,8 @@ async function buscaVentasComparativoAnterior(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
                     precioValorFinal: "$fichaC.examen.precioValorFinal",
@@ -380,8 +380,8 @@ async function buscaVentasPorExamenes(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     nombreExamen: "$fichaC.examen.nombre",
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
@@ -412,8 +412,8 @@ async function buscaVentasPorExamenes(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     nombreExamen: "$fichaC.examen.nombre",
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
@@ -551,9 +551,9 @@ async function buscaVentasPorDia(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
-                    dia: { $dayOfMonth: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    dia: { $dayOfMonth: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     nombreExamen: "$fichaC.examen.nombre",
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",
@@ -635,8 +635,8 @@ async function buscaVentasPorCliente(req,res) {
             {
                 $project:
                 {
-                    ano: { $year: "$fechaHora_envia_modifica" },
-                    mes: { $month: "$fechaHora_envia_modifica" },
+                    ano: { $year: "$seguimientoEstado.fechaHora_recepcionado_crea" },
+                    mes: { $month: "$seguimientoEstado.fechaHora_recepcionado_crea" },
                     nombreExamen: "$fichaC.examen.nombre",
                     empresa_Id:"$empresa.empresa_Id",
                     idCliente:"$fichaC.cliente.idCliente",

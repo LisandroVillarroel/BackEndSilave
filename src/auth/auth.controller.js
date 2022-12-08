@@ -73,23 +73,25 @@ exports.loginUsuario = (req,res,next) => {
                 //    SECRET_KEY, {
                 //        expiresIn: expiresIn
                 //    })
-                //    console.log('usuario:',_usuario);
+                   console.log('usuario:',_usuario);
+
+                   const   empresaConectadaI= {
+                            empresa_Id: _usuario.usuarioLaboratorioCliente.laboratorioCliente_Id,
+                            rutEmpresa: _usuario.usuarioLaboratorioCliente.laboratorioCliente_rut,
+                            razonSocial: _usuario.usuarioLaboratorioCliente.laboratorioCliente_razonSocial,
+                            nombreFantasia: _usuario.usuarioLaboratorioCliente.laboratorioCliente_nombreFantasia,
+                            menu_Id: _usuario.usuarioLaboratorioCliente.laboratorioCliente_menu_Id,
+                            tipoEmpresa: _usuario.usuarioLaboratorioCliente.laboratorioCliente_tipoEmpresa,
+                        }
+
+                    
                     const usuarioDato = {
                         _id: _usuario._id,
                         usuario: _usuario.usuario,
                         nombres:  _usuario.nombres,
                         apellidoPaterno: _usuario.apellidoPaterno,
                         apellidoMaterno: _usuario.apellidoMaterno,
-                        empresa: {
-                            empresa_Id: _usuario.empresa.empresa_Id,
-                            rutEmpresa: _usuario.empresa.rutEmpresa,
-                            menu_Id: _usuario.empresa.menu_Id,
-                            tipoEmpresa: _usuario.empresa.tipoEmpresa,
-                        },
-                        cliente:{
-                            idCliente: _usuario.cliente.idCliente,
-                            nombreFantasia: _usuario.cliente.nombreFantasia,
-                        },
+                        empresaConectada: empresaConectadaI,
                         accessToken: accessToken,
 
                      ////   expiresIn: expiresIn

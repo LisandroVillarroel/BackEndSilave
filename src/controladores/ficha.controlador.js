@@ -58,7 +58,7 @@ async function crearPropietario(req,res,next) {
 }
 
 async function crearFicha(req,res) {
-  //  console.log('pasoooo:',req.body);
+//  console.log('pasoooo:',req.body);
     if(req.body.fichas){             // Si trae información de la búsqueda anterior
         respuesta = {       
             error: true, 
@@ -71,9 +71,13 @@ async function crearFicha(req,res) {
     }
     try {
         let parametroEmp= parametro;
+        const fechaIngreso=new Date();
 
+        req.body.seguimientoEstado.fechaHora_ingresado_crea=fechaIngreso;
+        req.body.seguimientoEstado.fechaHora_ingresado_modifica=fechaIngreso;
+        req.body.seguimientoEstado.fechaHora_recepcionado_crea=fechaIngreso;
       //  console.log('correlativo:',req.params.numCorrelativo);
-
+        console.log('paso1');
         if (req.params.numCorrelativo==='1'){  // El 0 indica que es la primera vez que entra
         //    console.log('paso1');
             parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
@@ -84,8 +88,9 @@ async function crearFicha(req,res) {
           parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+0}}, {new: true})// mantiene el {new: true}  devuelve el documento
             
         }
-        
+        console.log('paso2');
         const ficha_resp = await new ficha(req.body).save();
+        console.log('paso3');
        // console.log('parametro:',parametroEmp);
        // console.log('ficha_resp._id:',ficha_resp._id);
        // console.log('parametroEmp.letra:',parametroEmp.letra);
@@ -110,7 +115,7 @@ async function crearFicha(req,res) {
             codigo: 500, 
             mensaje: error
         };
-      //  console.log(respuesta);
+        console.log(respuesta);
         return res.status(500).json(respuesta);
     }   
 }
@@ -372,26 +377,78 @@ async function actualizarFicha(req,res) {
         let ficha_actualiza = req.body.fichas[0];
         console.log('body:',req.body)
        
-        if (req.body.estadoFicha=='Enviado'){
-            console.log('paso if');
-            const fechaHora_envia_crea=new Date();
-            const fechaHora_envia_modifica=new Date();
-
-            var newDateOptions = {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit"
-        }
-
-           // fechaHora_envia_crea=fechaHora_envia_crea.toISOString('es-CL');
-            //console.log('fechaHora_envia_crea.toLocaleDateString():',moment(fechaHora_envia_crea).format('YYYY-MM-DD HH:mm:ss'););
-   
-        //    fechaHora_envia_crea=fechaHora_envia_crea.toISOString();
-            req.body.fechaHora_envia_crea=fechaHora_envia_crea;
-            req.body.fechaHora_envia_modifica=fechaHora_envia_modifica;
-            console.log(' fechaHora_envia_crea:', fechaHora_envia_crea);
-        }
         console.log('body:',req.body)
+
+        let fechaActual= new Date();
+
+        if (req.body.estadoFicha=='Ingresado' || req.body.estadoFicha=='Solicitado'){ // Pregunta si "Ingresado"  Laboratorio   o si "Solicitado" Veterinaria
+            req.body.seguimientoEstado.fechaHora_ingresado_modifica= fechaActual;
+            req.body.seguimientoEstado.fechaHora_recepcionado_modifica= fechaActual;
+        }
+        
+        if (req.body.fichas[0].estadoFicha=='Solicitado'){  // Pregunta por la información Actual, antes que se modifique
+            req.body.seguimientoEstado.fechaHora_recepcionado_crea= fechaActual;
+            req.body.seguimientoEstado.fechaHora_recepcionado_modifica= fechaActual;
+        }
+
+        ficha_actualiza = Object.assign(ficha_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
+        
+        // queryModifica={usuarioModifica_id: '', estado:'Borrado'};
+        const ficha_resp =await ficha.updateOne({_id: req.params.id},ficha_actualiza) 
+
+        respuesta = {
+            error: false, 
+            data: ficha_resp,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+       
+        
+     //   console.log('respuesta envia',);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: error.codigo, 
+          mensaje: error
+         };
+          console.log(respuesta);
+          return res.status(error.codigo).json(respuesta);
+      }   
+
+}
+
+async function actualizarFichaEnvia(req,res) {
+
+    if(req.body.error){ // Si biene un error de la busueda anterior
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: req.body.error
+           };
+            console.log(respuesta);
+            return res.status(500).json(respuesta);
+    }
+
+    if(!req.body.fichas){             // Si no trae información de la búsqueda anterior
+        respuesta = {       
+            error: true, 
+            data: '',
+            codigo: 404, 
+            mensaje: 'No Encontro la Ficha'
+           };
+            return res.status(200).json(respuesta);
+    }
+
+    // si encontro información reemplaza información
+    try {
+        let ficha_actualiza = req.body.fichas[0];
+
+        const fechaHora_envia_crea=new Date();
+
+        req.body.seguimientoEstado.fechaHora_enviado=fechaHora_envia_crea;
         
         ficha_actualiza = Object.assign(ficha_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
         
@@ -420,6 +477,58 @@ async function actualizarFicha(req,res) {
       }   
 
 }
+
+
+async function actualizarFichaCorreoClienteFinal(req,res) {
+
+    if(req.body.error){ // Si biene un error de la busueda anterior
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: req.body.error
+           };
+            console.log(respuesta);
+            return res.status(500).json(respuesta);
+    }
+
+    if(!req.body.fichas){             // Si no trae información de la búsqueda anterior
+        respuesta = {       
+            error: true, 
+            data: '',
+            codigo: 404, 
+            mensaje: 'No Encontro la Ficha'
+           };
+            return res.status(200).json(respuesta);
+    }
+
+    // si encontro información reemplaza información
+    try {
+        await ficha.updateOne({_id: req.params.id},{$set:{'fichaC.correoClienteFinal':req.body.correoClienteFinal}}) 
+
+        respuesta = {
+            error: false, 
+            data: ficha_resp,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+       
+        
+     //   console.log('respuesta envia',);
+        res.status(200).json(respuesta)
+    } catch(error) {
+        respuesta = {
+          error: true, 
+          data: '',
+          codigo: error.codigo, 
+          mensaje: error
+         };
+          console.log(respuesta);
+          return res.status(error.codigo).json(respuesta);
+      }   
+
+}
+
 
 function buscarFicha(req,res) {
    
@@ -563,14 +672,14 @@ async function buscarTodosFichaPorFecha(req,res) {
             if (req.params.estadoFicha!='Todo'){
                 let arr = req.params.estadoFicha.split(','); 
                 query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},
-                fechaHora_envia_modifica: {
+                'seguimientoEstado.fechaHora_enviado': {
                     $gte: ISODate(req.params.fechaInicio),
                     $lte: ISODate(req.params.fechaFin)
                  },
                 estado: {$ne:'Borrado'}};
             }else{
                 query={'empresa.empresa_Id':req.params.empresaOrigen,
-                fechaHora_envia_modifica: {
+                'seguimientoEstado.fechaHora_enviado': {
                     $gte: ISODate(req.params.fechaInicio),
                     $lte: ISODate(req.params.fechaFin)
                  },
@@ -602,11 +711,11 @@ async function buscarTodosFichaVet(req,res) {
     try {
         
       //  if (req.params.privilegio='Administrador'){
-        console.log('tipo empresa:',req.params.tipoEmpresa)
+        let arr = req.params.estadoFicha.split(','); 
       
    
             if (req.params.estadoFicha!='Todo'){
-                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,estado: {$ne:'Borrado'}};
+                query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:{$in:arr},estado: {$ne:'Borrado'}};
             }else{
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estado: {$ne:'Borrado'}};
             }
@@ -636,11 +745,13 @@ async function buscarTodosFichaPorFechaVet(req,res) {
     try {
         
       //  if (req.params.privilegio='Administrador'){
-        console.log('tipo empresa:',req.params.tipoEmpresa)
+        console.log('tipo estadoFicha:',req.params.estadoFicha)
+        console.log('tipo estadoFicha:',req.params.fechaInicio)
+        console.log('tipo estadoFicha:',req.params.fechaInicio)
 
             if (req.params.estadoFicha!='Todo'){
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,
-                fechaHora_envia_modifica: {
+                'seguimientoEstado.fechaHora_enviado': {
                     $gte: ISODate(req.params.fechaInicio),
                     $lte: ISODate(req.params.fechaFin)
                  },
@@ -648,15 +759,17 @@ async function buscarTodosFichaPorFechaVet(req,res) {
 
             }else{
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,
-                fechaHora_envia_modifica: {
+                'seguimientoEstado.fechaHora_enviado': {
                     $gte: ISODate(req.params.fechaInicio),
                     $lte: ISODate(req.params.fechaFin)
                  },
                  estado: {$ne:'Borrado'}};
             }
+
+            console.log('query;',query)
         
         const fichas = await ficha.find(query).sort()
-  
+        console.log('fichas;',fichas)
 
         respuesta = {
             error: false, 
@@ -694,5 +807,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
+    crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,actualizarFichaEnvia,actualizarFichaCorreoClienteFinal,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
 }

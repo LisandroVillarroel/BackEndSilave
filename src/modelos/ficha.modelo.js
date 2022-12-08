@@ -127,6 +127,18 @@ const schemaFicha = new Schema({
                 type: String,
                 trim: true  
             },
+            precioValor: {
+                type: Number,
+                trim: true  
+            },
+            precioValorFinal: {
+                type: Number,
+                trim: true  
+            },
+            diasPreparacion: {
+                type: Number,
+                trim: true  
+            },
         },
         validador:{
             idValidador:{
@@ -359,22 +371,27 @@ const schemaFicha = new Schema({
     ingresadoPor:{
         tipoEmpresa: {
             type: String,
+            required: true,
             trim: true
         },
         idIngreso: {
             type: String,
+            required: true,
             trim: true
         },
         rutIngreso: {
             type: String,
+            required: true,
             trim: true
         },
         razonSocial: {
             type: String,
+            required: true,
             trim: true
         },
-        nombreFactasia: {
+        nombreFantasia: {
             type: String,
+            required: true,
             trim: true
         },
     },
@@ -383,16 +400,73 @@ const schemaFicha = new Schema({
             type: String, 
             default: 'Pendiente' 
         },
+        numFactura:{
+            type: Number,
+            default: 0
+        },
         fechaFacturacion: { 
             type: Date
         },
+        fechaAsignaFactura: { 
+            type: Date
+        },
+        usuarioAsigna_id: {
+            type: String,
+            trim: true
+        },
         fechaPagoFacturacion: { 
             type: Date
+        },
+        facturaPagada: { 
+            type: String, 
+            default: 'NO' 
         },
     },
     estadoFicha:{
         type: String, 
         default: 'Ingresado' 
+    },
+    seguimientoEstado:{
+     
+        usuarioIngresado_crea_id: {
+            type: String,
+            trim: true  
+        },
+        usuarioIngresado_modifica_id: {
+            type: String,
+            trim: true  
+        },
+        fechaHora_ingresado_crea: { 
+            type: Date
+        },
+        fechaHora_ingresado_modifica: { 
+            type: Date
+        },
+
+        usuarioRecepcionado_crea_id: {
+            type: String,
+            trim: true  
+        },
+        fechaHora_recepcionado_crea: { 
+            type: Date
+        },
+
+        usuarioRecepcionado_modifica_id: {
+            type: String,
+            trim: true  
+        },
+        fechaHora_recepcionado_modifica: { 
+            type: Date
+        },
+
+        usuarioEnviado_id: {
+            type: String,
+            trim: true  
+        },
+        fechaHora_enviado: { 
+            type: Date
+        },
+       
     },
     usuarioCrea_id: {
         type: String,
@@ -404,27 +478,7 @@ const schemaFicha = new Schema({
         required: true,
         trim: true
     },
-    usuarioEnvioCrea_id: {
-        type: String,
-        trim: true  
-    },
-    usuarioEnvioModifica_id: {
-        type: String,
-        trim: true  
-    },
-    usuarioRecepcionaCrea_id: {
-        type: String,
-        trim: true  
-    },
-    fechaHora_envia_crea: { 
-        type: Date
-    },
-    fechaHora_envia_modifica:{
-        type: Date
-    },
-    fechaHora_recepciona_crea: { 
-        type: Date
-    },
+   
     estado: { 
         type: String, 
         default: 'Activo' 

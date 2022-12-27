@@ -4,7 +4,7 @@ const cliente = require('../modelos/cliente.modelo');
 const parametro = require('../modelos/parametro.modelo');
 const propietario = require('../modelos/propietario.modelo'); 
 
-const mailer = require('./../template/envioCorreo')
+const mailer = require('./../template/envioCorreoSendGrid')
 const mailerClienteFinal = require('./../template/envioCorreoClienteFinal')
 const mailerRecepcionSolicitudEmpresa = require('./../template/envioCorreoRecepcionSolicitudEmpresa')
 
@@ -14,15 +14,8 @@ var moment = require('moment-timezone');
 
 async function crearPropietario(req,res,next) {
     console.log('pasoooo Propietario:',req.body);
-    if(req.body.fichas){             // Si trae información de la búsqueda anterior
-        respuesta = {       
-            error: true, 
-            data: '',
-            codigo: 404, 
-            mensaje: 'Ya existe'
-           };
-        console.log(respuesta);
-        return res.status(200).json(respuesta);
+    if(req.body.fichaC.rutPropietario===''){             // Si trae información de la búsqueda anterior
+        return next();
     }
     try {
         const newPropietario = {
@@ -51,9 +44,13 @@ async function crearPropietario(req,res,next) {
         return next();
 
     } catch(error) {
-        console.log('error',error)
-        req.body.error = error;  // si hay un error lo guarda y pasa a la siguiente funcion
-        next();
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: error
+        };
+        return res.status(500).json(respuesta);
     }
 }
 
@@ -78,6 +75,8 @@ async function crearFicha(req,res) {
         req.body.seguimientoEstado.fechaHora_recepcionado_crea=fechaIngreso;
       //  console.log('correlativo:',req.params.numCorrelativo);
         console.log('paso1');
+        console.log('req.params.numCorrelativo:',req.params.numCorrelativo)
+        console.log('req.body.empresa.empresa_Id:',req.body.empresa.empresa_Id)
         if (req.params.numCorrelativo==='1'){  // El 0 indica que es la primera vez que entra
         //    console.log('paso1');
             parametroEmp= await parametro.findOneAndUpdate({empresa_id:  req.body.empresa.empresa_Id},{ $inc: { numeroFicha:+1}}, {new: true})//  {new: true}  devuelve el documento
@@ -119,6 +118,38 @@ async function crearFicha(req,res) {
         return res.status(500).json(respuesta);
     }   
 }
+
+async function envioCorreoSendGrid(req,res) {
+    let mailOptions = {
+        envioEmail:{
+            emailEnvio: 'empresa_[0].envioEmail.emailEnvio',
+            password: 'empresa_[0].envioEmail.password',
+            nombreDesde: 'empresa_[0].envioEmail.nombreDesde',
+            asunto: 'empresa_[0].envioEmail.asunto',
+            tituloCuerpo: 'empresa_[0].envioEmail.tituloCuerpo',
+            tituloCuerpoMedio: 'empresa_[0].envioEmail.tituloCuerpoMedio',
+            tituloCuerpoPie: 'empresa_[0].envioEmail.tituloCuerpoPie'
+        },
+        correoRecepcionCliente: 'ficha_[0].fichaC.cliente.correoRecepcionCliente',
+        rutEmpresa: 'empresa_[0].rutEmpresa',
+        nombreExamen: 'ficha_[0].fichaC.examen.nombre',
+        numFicha: 'ficha_[0].fichaC.numeroFicha'
+      };
+    mailer.enviar_mail(mailOptions, function (err,info) {
+        if(err)
+            {
+                respuesta = {
+                    error: true, 
+                    data: '',
+                    codigo: 500, 
+                    mensaje: error
+                };
+                return res.status(500).json(respuesta);
+            }
+    }
+    );
+}
+
 
 async function envioCorreo(req,res) {
     
@@ -807,5 +838,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,actualizarFichaEnvia,actualizarFichaCorreoClienteFinal,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
+    envioCorreoSendGrid,crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,actualizarFichaEnvia,actualizarFichaCorreoClienteFinal,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
 }

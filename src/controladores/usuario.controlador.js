@@ -126,12 +126,13 @@ async function actualizarUsuarioContrasena(req,res) {
     }
     try {
         console.log('contraseña base:',req.body.usuarios[0].contrasena);
-        console.log('contraseña nueva:',bcrypt.hashSync('1'));
+        console.log('contraseña nueva:',bcrypt.hashSync('2'));
         console.log('contraseña nueva:',bcrypt.hashSync(req.body.contrasenaActual));
         console.log('req:',req.body);
 
-        const resultContrasena = bcrypt.compareSync(req.body.usuarios[0].contrasena,req.body.contrasenaActual); //Base,parámetro
-          if (resultContrasena){  // si la contraseña corresponde True
+        const resultContrasena = bcrypt.compareSync(req.body.contrasenaActual,req.body.usuarios[0].contrasena); //Base,parámetro
+        console.log('comparacion:',resultContrasena)
+          if (!resultContrasena){  // si la contraseña corresponde True
       //  if(req.body.usuarios[0].contrasena!=bcrypt.hashSync(req.body.contrasenaActual)){             // Si las contraseñas son distintas
             respuesta = {       
                 error: true, 
@@ -266,14 +267,11 @@ async function reseteaUsuarioContrasena(req,res) {
         req.body.usuarios[0].resetToken=accessTokenReset;
         let usuario_actualiza = req.body;
         usuario_actualiza = Object.assign(usuario_actualiza,req.body);  // Object.assign( Asigna todas las variables y propiedades, devuelve el Objeto
-        await usuario.updateOne({_id: req.params.id},usuario_actualiza) 
-        console.log('usuario rescatado:',req.body.usuarios[0].empresa);
-        let query={};
-        query={_id: req.body.usuarios[0].empresa.empresa_Id, estado: {$ne:'Borrado'}};
-        console.log('query empresa:',query);
-        const empresa_ = await empresa.find(query)
-        console.log('empresa:',empresa_)
-        mailerReset.enviar_mailReset(empresa_,req.body.usuarios[0].nombres,req.body.usuarios[0].apellidoPaterno,verificaLink);
+        await usuario.updateOne({_id: req.body.usuarios[0]._id},usuario_actualiza) 
+        console.log('usuario rescatado:',req.body.usuarios[0]);
+
+        
+        mailerReset.enviar_mailReset(req.body.usuarios[0].email,req.body.usuarios[0].nombres,req.body.usuarios[0].apellidoPaterno,verificaLink);
 
         respuesta = {
             error: false, 
@@ -479,7 +477,9 @@ async function buscaId(req,res,next){
 async function buscaUsuario(req,res,next){
     try {
         let query={};
-        query={usuario: req.params.usuario, estado: {$ne:'Borrado'}, estadoUsuario: {$ne:'Inactivo'}};
+        console.log('login:',req.params.usuario.toUpperCase())
+        query={usuario: req.params.usuario.toUpperCase(), estado: {$ne:'Borrado'}, estadoUsuario: {$ne:'Inactivo'}};
+        console.log('query:',query)
         const usuarios = await usuario.find(query)
         console.log('usuario:',usuarios);
         if(!usuarios.length) return next(); // si no tiene datos pasa a la siguiente funcion

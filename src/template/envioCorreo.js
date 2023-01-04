@@ -2,14 +2,17 @@
 const nodemailer = require('nodemailer');
 const path_ = require('path');
 
+const usuEnvioClienteCorreo = require('./../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
+const pswEnvioClienteCorreo = require('./../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
+
 require('dotenv').config();
 this.enviar_mail = (dato) => {
     console.log('envio correo:',dato);
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: dato.envioEmail.emailEnvio,
-            pass: dato.envioEmail.password
+            user: usuEnvioClienteCorreo, //dato.envioEmail.emailEnvio,
+            pass: pswEnvioClienteCorreo, //dato.envioEmail.password
         }
     });
     let mail_options = {

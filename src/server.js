@@ -22,6 +22,8 @@ const menuRuta = require('./rutas/menu.ruta.js');
 const panelVentas = require('./rutas/panelVentas.ruta.js');
 const fichaFacturas = require('./rutas/fichaFactura.ruta.js');
 
+const portada = require('./rutas/portada.ruta.js');
+
 const express = require('express');
 const propiedadesDb = require('./config/propiedades');
 const DB = require('./config/db');
@@ -154,6 +156,9 @@ panelVentas(router);
 app.use('./api',router);
 fichaFacturas(router);
 
+//// portada
+app.use('./api',router);
+portada(router);
 
 router.get('/', (req,res) => {
     res.send('Ruta Inicial');

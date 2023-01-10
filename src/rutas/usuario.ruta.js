@@ -12,4 +12,5 @@ module.exports = (router) => {
     router.get('/usuarioTodo/:empresaId/:tipoEmpresa', permiso, Usuarios.buscarTodosUsuariosEmpresa);
     router.get('/usuarioTodoLaboratorio/:empresaId', permiso, Usuarios.buscarTodosUsuariosEmpresaLaboratorio);
     router.get('/usuarioTodo', permiso, Usuarios.buscarTodosUsuarios);
+    router.get('/usuarioPermiso/:id/:route',permiso, Usuarios.buscaId, Usuarios.buscarUsuarioPermiso);
 }

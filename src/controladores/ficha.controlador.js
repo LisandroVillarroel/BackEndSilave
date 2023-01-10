@@ -5,8 +5,8 @@ const parametro = require('../modelos/parametro.modelo');
 const propietario = require('../modelos/propietario.modelo'); 
 
 const mailer = require('./../template/envioCorreoSendGrid')
-const mailerClienteFinal = require('./../template/envioCorreoClienteFinal')
-const mailerRecepcionSolicitudEmpresa = require('./../template/envioCorreoRecepcionSolicitudEmpresa')
+const mailerClienteFinal = require('../template/envioCorreoClienteFinalSendGrid')
+const mailerRecepcionSolicitudEmpresa = require('./../template/envioCorreoRecepcionSolicitudEmpresaSendGrid')
 
 var ISODate = require('isodate');
 //const moment = require('moment');
@@ -622,20 +622,29 @@ async function buscarTodosFicha(req,res) {
       //  if (req.params.privilegio='Administrador'){
         console.log('tipo empresa:',req.params.tipoEmpresa)
         let arr = req.params.estadoFicha.split(','); 
-        if (req.params.tipoEmpresa=='Veterinaria'){
+        /*if (req.params.tipoEmpresa=='Veterinaria'){
             
             if (req.params.estadoFicha!='Todo'){
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:{$in:arr},'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
             }else{
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
             }
-        }else{
+        }else{*/
             if (req.params.estadoFicha!='Todo'){
-                query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},estado: {$ne:'Borrado'}};
+                if (req.params.tipoPermiso=='Administrador'){  //Permite ver si elpermiso es totalo solo especifico
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},estado: {$ne:'Borrado'}};
+                }else{
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},'usuarioAsignado.idUsuario':req.params.idUsuarioAsignado,estado: {$ne:'Borrado'}};
+                }
             }else{
-                query={'empresa.empresa_Id':req.params.empresaOrigen,estado: {$ne:'Borrado'}};
+                if (req.params.tipoPermiso=='Administrador'){//Permite ver si elpermiso es totalo solo especifico
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,estado: {$ne:'Borrado'}};
+                }else{
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,'usuarioAsignado.idUsuario':req.params.idUsuarioAsignado,estado: {$ne:'Borrado'}};
+                }
             }
-        }
+            
+        /*}*/
         console.log('query ficha:',query);
         const fichas = await ficha.find(query).sort('nombrePaciente');
         respuesta = {
@@ -663,31 +672,39 @@ async function buscarTodosFichaPorFecha(req,res) {
       //  if (req.params.privilegio='Administrador'){
         console.log('tipo empresa:',req.params.tipoEmpresa)
       
-        if (req.params.tipoEmpresa=='Veterinaria'){
+       /* if (req.params.tipoEmpresa=='Veterinaria'){
    
             if (req.params.estadoFicha!='Todo'){
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,estadoFicha:req.params.estadoFicha,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
             }else{
                 query={'fichaC.cliente.idCliente':req.params.empresaOrigen,'ingresadoPor.tipoEmpresa':'Veterinaria',estado: {$ne:'Borrado'}};
             }
-        }else{
+        }else{*/
             if (req.params.estadoFicha!='Todo'){
                 let arr = req.params.estadoFicha.split(','); 
-                query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},
-                'seguimientoEstado.fechaHora_enviado': {
-                    $gte: ISODate(req.params.fechaInicio),
-                    $lte: ISODate(req.params.fechaFin)
-                 },
-                estado: {$ne:'Borrado'}};
+                if (req.params.tipoPermiso=='Administrador'){  //Permite ver si elpermiso es totalo solo especifico
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},
+                    'seguimientoEstado.fechaHora_enviado': {$gte: ISODate(req.params.fechaInicio),$lte: ISODate(req.params.fechaFin) },
+                    estado: {$ne:'Borrado'}};
+                }else{
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,estadoFicha:{$in:arr},
+                    'seguimientoEstado.fechaHora_enviado': {$gte: ISODate(req.params.fechaInicio),$lte: ISODate(req.params.fechaFin)},
+                    'usuarioAsignado.idUsuario':req.params.idUsuarioAsignado,
+                    estado: {$ne:'Borrado'}};
+                }
             }else{
-                query={'empresa.empresa_Id':req.params.empresaOrigen,
-                'seguimientoEstado.fechaHora_enviado': {
-                    $gte: ISODate(req.params.fechaInicio),
-                    $lte: ISODate(req.params.fechaFin)
-                 },
-                 estado: {$ne:'Borrado'}};
+                if (req.params.tipoPermiso=='Administrador'){  //Permite ver si elpermiso es totalo solo especifico
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,
+                    'seguimientoEstado.fechaHora_enviado': {$gte: ISODate(req.params.fechaInicio),$lte: ISODate(req.params.fechaFin)},
+                    estado: {$ne:'Borrado'}};
+                }else{
+                    query={'empresa.empresa_Id':req.params.empresaOrigen,
+                    'seguimientoEstado.fechaHora_enviado': {$gte: ISODate(req.params.fechaInicio),$lte: ISODate(req.params.fechaFin)},
+                    'usuarioAsignado.idUsuario':req.params.idUsuarioAsignado,
+                    estado: {$ne:'Borrado'}};
+                }
             }
-        }
+       /*}*/
         console.log('query ficha:',query);
         const fichas = await ficha.find(query).sort('nombrePaciente');
         respuesta = {

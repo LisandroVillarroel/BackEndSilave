@@ -1,19 +1,8 @@
 'use strict'
-const nodemailer = require('nodemailer');
-const path_ = require('path');
-const usuEnvioClienteCorreo = require('./../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
-const pswEnvioClienteCorreo = require('./../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
-
+const sgMail= require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 require('dotenv').config();
 this.enviar_mail_recepcion_Solicitud = (dato) => {
-    console.log('envio correo:',dato);
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: usuEnvioClienteCorreo,
-            pass: pswEnvioClienteCorreo 
-        }
-    });
     let tabla= '<table style="border:1px solid black;border-collapse:collapse;">'
     tabla=tabla+'<tr bgcolor="#CACFD2" style="border:1px solid black;border-collapse:collapse; text-align:center;"><td  style="border:1px solid black;border-collapse:collapse;">N°</td><td style="border:1px solid black;border-collapse:collapse;">Exámen</td></tr>'
     for (var i = 0; i < dato.examenesSolicitados.length; i++) { 
@@ -21,10 +10,11 @@ this.enviar_mail_recepcion_Solicitud = (dato) => {
     }
     tabla= tabla+' </table>'
 
-    let mail_options = {
-        from: 'Pabs',
-        to: dato.emailRecepcion, //'lisandrovillarroell@gmail.com'
+    const msg = {
+        to: dato.emailRecepcion,
+        from: "No Responder LAVET<no-reply.lavet@sidetec.cl>",
         subject: dato.rutCliente +'-'+ dato.nombreFantasiaCliente +'('+dato.numFicha+')' ,
+        //text: "cuerpo 11111",
         html: `
             <h2>Exámenes solicitados por: ${dato.nombreFantasiaCliente } </h2>
             <table border="0" cellpadding="0" cellspacing="0" width="600px">
@@ -41,12 +31,11 @@ this.enviar_mail_recepcion_Solicitud = (dato) => {
             </table>
      `
     };
-    transporter.sendMail(mail_options, (error, info) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('El correo se envío correctamente ' + info.response);
-        }
-    });
+    console.log('msg:',msg)
+sgMail.send(msg).then(result => {
+    console.log("Email Enviado",result);
+  }, err => {
+    console.error('error correo:',err);
+  });
 };
 module.export = this;

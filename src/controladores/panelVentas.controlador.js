@@ -1,7 +1,4 @@
 const ficha = require('../modelos/ficha.modelo');
-const empresa = require('../modelos/empresa.modelo');
-
-
 
 async function buscaGeneralVentas(req,res) {
     try {

@@ -14,7 +14,7 @@ console.log('email dato:',dato)
   const attachment = fs.readFileSync(pathToAttachment).toString("base64");
     const msg = {
         to: dato.correoRecepcionCliente, //"lisandrovillarroell@gmail.com",
-        from: "No-Reply LAVET<no-reply.lavet@sidetec.cl>",
+        from: "No Responder LAVET<no-reply.lavet@sidetec.cl>",
         subject: dato.envioEmail.asunto + ' ' + dato.nombreExamen.toUpperCase(),
         //text: "cuerpo 11111",
         html: `

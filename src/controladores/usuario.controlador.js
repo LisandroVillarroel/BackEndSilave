@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jwt-simple'); 
 const moment = require('moment');
 const codSecretoToken = require('./../config/propiedades');
-const mailerReset = require('./../template/envioCorreoReseteaContrasena')
+const mailerReset = require('./../template/envioCorreoReseteaContrasenaSendGrid')
 
 async function crearUsuario(req,res) {    
         if(req.body.usuarios){             // Si trae información de la búsqueda anterior
@@ -294,6 +294,46 @@ async function reseteaUsuarioContrasena(req,res) {
 
 }
 
+function buscarUsuarioPermiso(req,res) {
+    let tipoPermiso='';
+    if(req.body.error){ // Si biene un error de la busueda anterior
+        respuesta = {
+            error: true, 
+            data: '',
+            codigo: 500, 
+            mensaje: req.body.error
+        };
+        return res.status(500).json(respuesta);
+    }
+
+    if(req.body.usuarios){  // si la función de busqueda encontro información
+       console.log('dto usuario:',req.body.usuarios[0].MenuItem)
+       for (a = 0; a < req.body.usuarios[0].MenuItem.length; a++) {
+        if (req.body.usuarios[0].MenuItem[a].route==req.params.route){
+            tipoPermiso=req.body.usuarios[0].MenuItem[a].tipoPermiso
+            break;
+        }
+       }
+            
+    
+        respuesta = {
+            error: false, 
+            data: tipoPermiso,
+            codigo: 200, 
+            mensaje: 'ok'
+        };
+        return res.status(200).json(respuesta);
+    }
+   //si no encontro registros
+    respuesta = {
+        error: false, 
+        data: '',
+        codigo: 404, 
+        mensaje: 'No encontró el Usuario'
+    };
+    return res.status(404).json(respuesta);
+}
+
 function buscarUsuario(req,res) {
    
     if(req.body.error){ // Si biene un error de la busueda anterior
@@ -437,8 +477,8 @@ async function buscarTodosUsuariosEmpresa(req,res) {
 async function buscarTodosUsuariosEmpresaLaboratorio(req,res) {
     try {
         
-        query={'empresa.empresa_Id':req.params.empresaId,'cliente.idCliente':'',estado: {$ne:'Borrado'}};
-        console.log('usuario todo Doctor:',query);
+        query={'usuarioLaboratorioCliente.laboratorioCliente_Id':req.params.empresaId,estado: {$ne:'Borrado'}};
+        console.log('usuario todo Doctor2:',query);
         const usuarios = await usuario.find(query).sort('apellidoPaterno');
         respuesta = {
             error: false, 
@@ -492,5 +532,5 @@ async function buscaUsuario(req,res,next){
 }
 
 module.exports = {
-    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscarTodosUsuariosEmpresa,buscarTodosUsuariosEmpresaLaboratorio,buscaId,buscaUsuario
+    crearUsuario, actualizarUsuario,actualizarUsuarioContrasena,actualizarUsuarioContrasenaReset,reseteaUsuarioContrasena,buscarUsuario,eliminarUsuario,buscarTodosUsuarios,buscarTodosUsuariosEmpresa,buscarTodosUsuariosEmpresaLaboratorio,buscarUsuarioPermiso,buscaId,buscaUsuario
 }

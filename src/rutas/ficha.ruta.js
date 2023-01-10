@@ -10,8 +10,8 @@ module.exports = (router) => {
     router.put('/fichaCorreo/:id',permiso,Fichas.buscaId, Fichas.actualizarFichaCorreoClienteFinal);
     router.get('/ficha/:id',permiso, Fichas.buscaId, Fichas.buscarFicha);
     router.delete('/ficha/:id/:idUsu',permiso, Fichas.buscaId, Fichas.eliminarFicha);
-    router.get('/fichaTodo/:empresaOrigen/:estadoFicha/:usuario/:tipoEmpresa', permiso, Fichas.buscarTodosFicha);
-    router.get('/fichaTodoPorFecha/:empresaOrigen/:estadoFicha/:usuario/:tipoEmpresa/:fechaInicio/:fechaFin', permiso, Fichas.buscarTodosFichaPorFecha);
+    router.get('/fichaTodo/:empresaOrigen/:estadoFicha/:usuario/:tipoPermiso/:idUsuarioAsignado', permiso, Fichas.buscarTodosFicha);
+    router.get('/fichaTodoPorFecha/:empresaOrigen/:estadoFicha/:usuario/:fechaInicio/:fechaFin/:tipoPermiso/:idUsuarioAsignado', permiso, Fichas.buscarTodosFichaPorFecha);
     router.get('/fichaTodoVet/:empresaOrigen/:estadoFicha/:usuario', permiso, Fichas.buscarTodosFichaVet);
     router.get('/fichaTodoPorFechaVet/:empresaOrigen/:estadoFicha/:usuario/:fechaInicio/:fechaFin', permiso, Fichas.buscarTodosFichaPorFechaVet);
     router.post('/fichaSubeArchivo/:ficha_id', permiso, upload_(),Fichas.envioCorreo);      // Envía correo a Veterinaria

@@ -2,8 +2,8 @@
 const nodemailer = require('nodemailer');
 const path_ = require('path');
 
-const usuEnvioClienteCorreo = require('./../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
-const pswEnvioClienteCorreo = require('./../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
+const usuEnvioClienteCorreo = require('../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
+const pswEnvioClienteCorreo = require('../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
 
 require('dotenv').config();
 this.enviar_mail = (dato) => {

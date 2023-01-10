@@ -1,14 +1,20 @@
 'use strict'
 const sgMail= require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const path_ = require('path');
+const fs = require("fs");
 
 
 
 this.enviar_mail = (dato) => {
-    console.log('paso correo:',dato)
+
+  const  pathToAttachment =   path_.join(__dirname,'../../public/pdfs/'+dato.rutEmpresa.slice(0, -2)+'/'+ dato.numFicha+'.pdf')
+console.log('email dato:',dato)
+
+  const attachment = fs.readFileSync(pathToAttachment).toString("base64");
     const msg = {
         to: dato.correoRecepcionCliente, //"lisandrovillarroell@gmail.com",
-        from: "No-Reply LAVET<no-reply.lavet@sidetec.cl>",
+        from: "No Responder LAVET<no-reply.lavet@sidetec.cl>",
         subject: dato.envioEmail.asunto + ' ' + dato.nombreExamen.toUpperCase(),
         //text: "cuerpo 11111",
         html: `

@@ -16,7 +16,7 @@ this.enviar_mail = (dato) => {
         }
     });
     let mail_options = {
-        from: 'Pabs',
+        from: 'Pabs', 
         to: dato.correoRecepcionCliente, //'lisandrovillarroell@gmail.com'
         subject: dato.envioEmail.asunto,
         html: `

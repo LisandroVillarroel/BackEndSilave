@@ -1,22 +1,22 @@
 'use strict'
 const nodemailer = require('nodemailer');
 const path_ = require('path');
-const usuEnvioClienteCorreo = require('../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
-const pswEnvioClienteCorreo = require('../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
+const usuEnvioClienteCorreo = require('./../config/propiedades').USU_ENVIA_CLIENTE_FINAL_MAIL;  //Usuario envía correo Cliente Final
+const pswEnvioClienteCorreo = require('./../config/propiedades').PSW_ENVIA_CLIENTE_FINAL_MAIL;  //Contraseña envía correo cliente final
 
 require('dotenv').config();
-this.enviar_mailReset = (email,nombres,apellidoPaterno,link) => {
+this.enviar_mailReset = (datoEmpresa,nombres,apellidoPaterno,link) => {
     
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: usuEnvioClienteCorreo, //datoEmpresa[0].envioEmail.emailEnvio,
-            pass: pswEnvioClienteCorreo //datoEmpresa[0].envioEmail.password
+            user: datoEmpresa[0].envioEmail.emailEnvio,
+            pass: datoEmpresa[0].envioEmail.password
         }
     });
     let mail_options = {
         from: 'Pabs',
-        to: email,//'lisandrovillarroell@gmail.com',
+        to: 'lisandrovillarroell@gmail.com',
         subject: 'Recuperar Contraseña',
         html: `
             <table border="0" cellpadding="0" cellspacing="0" width="600px" >

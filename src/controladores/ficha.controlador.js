@@ -119,6 +119,36 @@ async function crearFicha(req,res) {
     }   
 }
 
+async function envioCorreoSendGrid(req,res) {
+    let mailOptions = {
+        envioEmail:{
+            emailEnvio: 'empresa_[0].envioEmail.emailEnvio',
+            password: 'empresa_[0].envioEmail.password',
+            nombreDesde: 'empresa_[0].envioEmail.nombreDesde',
+            asunto: 'empresa_[0].envioEmail.asunto',
+            tituloCuerpo: 'empresa_[0].envioEmail.tituloCuerpo',
+            tituloCuerpoMedio: 'empresa_[0].envioEmail.tituloCuerpoMedio',
+            tituloCuerpoPie: 'empresa_[0].envioEmail.tituloCuerpoPie'
+        },
+        correoRecepcionCliente: 'ficha_[0].fichaC.cliente.correoRecepcionCliente',
+        rutEmpresa: 'empresa_[0].rutEmpresa',
+        nombreExamen: 'ficha_[0].fichaC.examen.nombre',
+        numFicha: 'ficha_[0].fichaC.numeroFicha'
+      };
+    mailer.enviar_mail(mailOptions, function (err,info) {
+        if(err)
+            {
+                respuesta = {
+                    error: true, 
+                    data: '',
+                    codigo: 500, 
+                    mensaje: error
+                };
+                return res.status(500).json(respuesta);
+            }
+    }
+    );
+}
 
 
 async function envioCorreo(req,res) {
@@ -445,7 +475,6 @@ async function actualizarFichaEnvia(req,res) {
 
     // si encontro información reemplaza información
     try {
-        console.log('paso, actualiza')
         let ficha_actualiza = req.body.fichas[0];
 
         const fechaHora_envia_crea=new Date();
@@ -826,5 +855,5 @@ async function buscaId(req,res,next){
 }
 
 module.exports = {
-    crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,actualizarFichaEnvia,actualizarFichaCorreoClienteFinal,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
+    envioCorreoSendGrid,crearPropietario,crearFicha,envioCorreo,envioCorreoClienteFinal,envioCorreoSolicitudCliente,actualizarFicha,actualizarFichaEnvia,actualizarFichaCorreoClienteFinal,buscarFicha,eliminarFicha,buscarTodosFicha,buscarTodosFichaPorFecha,buscarTodosFichaVet,buscarTodosFichaPorFechaVet,buscaId
 }

@@ -98,6 +98,11 @@ const schemaCliente = new Schema({
         required: true,
         trim: true
     },
+    nombreLogo: {
+        type: String,
+        required: true,
+        trim: true
+    },
     estado: { 
         type: String, 
         default: 'Activo' 
